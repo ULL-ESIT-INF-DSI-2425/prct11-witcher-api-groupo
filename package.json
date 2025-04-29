@@ -12,7 +12,8 @@
     "eslint": "eslint .",
     "prettier": "prettier --write .",
     "doc": "typedoc",
-    "test": "npx vitest run"
+    "test": "vitest run",
+    "coverage": "vitest run --coverage --coverage.include 'src/*.ts'"
   },
   "repository": {
     "type": "git",
