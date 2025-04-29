@@ -19,6 +19,11 @@ export const MerchantSchema = new Schema<MerchantDocument>({
     required: true,
     unique: true,
     trim: true,
+    validate: (value: number) => {
+      if (value < 0 || !Number.isInteger(value)) {
+        throw new Error("Merchant ID must be a positive integer");
+      }
+    },
   },
   name: {
     type: String,

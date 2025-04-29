@@ -1,5 +1,5 @@
-import { Document } from 'mongoose';
-import { Materials } from '../enums/materials.js';
+import { Document } from "mongoose";
+import { Materials } from "../enums/materials.js";
 
 /**
  * Interface representing a good document in the database.
