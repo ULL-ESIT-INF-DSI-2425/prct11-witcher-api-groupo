@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import { Races } from '../enums/races';
 import { Locations } from '../enums/locations';
+import { Races } from '../enums/races';
 import { ClientDocument } from '../interfaces/clientDocument';
 
 const ClientSchema = new Schema<ClientDocument>({
@@ -8,10 +8,12 @@ const ClientSchema = new Schema<ClientDocument>({
     type: String,
   },
   race: {
-    type: Races,
+    type: String,
+    enum: Object.values(Races)
   },
   location: {
-    type: Locations,
+    type: String,
+    enum: Object.values(Locations),
   }
 
 })
