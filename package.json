@@ -45,6 +45,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "mongodb": "^6.16.0",
+    "mongoose": "^8.14.0",
     "request": "^2.88.2"
   }
 }
