@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
-import { Locations } from '../enums/locations';
-import { Races } from '../enums/races';
-import { ClientDocument } from '../interfaces/clientDocument';
+import { Locations } from '../enums/locations.js';
+import { Races } from '../enums/races.js';
+import { ClientDocument } from '../interfaces/clientDocument.js';
 
 const ClientSchema = new Schema<ClientDocument>({
   name: {
