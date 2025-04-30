@@ -1,7 +1,7 @@
 import { MerchantDocument } from "../interfaces/merchantDocument.js";
 import { Locations } from "../enums/locations.js";
 import { MerchantType } from "../enums/merchantType.js";
-import { Schema, model } from "mongoose";
+import { Schema } from "mongoose";
 import validator from "validator";
 
 /**
@@ -41,23 +41,15 @@ export const MerchantSchema = new Schema<MerchantDocument>({
   location: {
     type: String,
     required: true,
-    enum: Object.values(Locations),
     trim: true,
-    validate: (value: string) => {
-      if (!Object.values(Locations).includes(value as Locations)) {
-        throw new Error("Invalid location");
-      }
-    },
+    lowercase: true,
+    enum: Object.values(Locations),
   },
   merchantType: {
     type: String,
     required: true,
-    enum: Object.values(MerchantType),
     trim: true,
-    validate: (value: string) => {
-      if (!Object.values(MerchantType).includes(value as MerchantType)) {
-        throw new Error("Invalid merchant type");
-      }
-    },
-  }
+    lowercase: true,
+    enum: Object.values(MerchantType),
+  },
 });

@@ -2,14 +2,14 @@
  * Enum with some materials to craft objects in The Witcher
  */
 export enum Materials {
-  MAKAHAM_STEEL = "Makaham Steel", 
-  HARDENED_LEATHER = "Hardened Leather", 
-  MAGIC_ESSENCE = "Magic Essence", 
-  MONSTER_ESSENCE = "Monster Essence",
-  METEORITE_LINGOT = "Meteorite Lingot",
-  RESIN = "Resin",
-  RUBY_DUST = "Ruby Dust",
-  STEEL_LINE = "Steel Line",
-  SIREN_VOCAL_CHORDS = "Siren Vocal Chords",
-  ZERRIKANIAN_POWDER = "Zerrikanian Powder"
+  MAKAHAM_STEEL = "makaham steel", 
+  HARDENED_LEATHER = "hardened leather", 
+  MAGIC_ESSENCE = "magic essence", 
+  MONSTER_ESSENCE = "monster essence",
+  METEORITE_LINGOT = "meteorite lingot",
+  RESIN = "resin",
+  RUBY_DUST = "ruby dust",
+  STEEL_LINE = "steel line",
+  SIREN_VOCAL_CHORDS = "siren vocal chords",
+  ZERRIKANIAN_POWDER = "zerrikanian powder"
 }

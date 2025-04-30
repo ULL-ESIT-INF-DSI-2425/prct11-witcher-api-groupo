@@ -39,21 +39,15 @@ export const ClientSchema = new Schema<ClientDocument>({
   race: {
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
     enum: Object.values(Races),
-    validate: (value: string) => {
-      if (!Object.values(Races).includes(value as Races)) {
-        throw new Error("Invalid race");
-      }
-    },
   },
   location: {
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
     enum: Object.values(Locations),
-    validate: (value: string) => {
-      if (!Object.values(Locations).includes(value as Locations)) {
-        throw new Error("Invalid location");
-      }
-    },
   },
 });

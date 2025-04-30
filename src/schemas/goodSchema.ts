@@ -51,12 +51,8 @@ export const GoodSchema = new Schema<GoodDocument>({
     type: String,
     required: true,
     trim: true,
+    lowercase: true,
     enum: Object.values(Materials),
-    validate: (value: string) => {
-      if (!Object.values(Materials).includes(value as Materials)) {
-        throw new Error("Invalid material");
-      }
-    },
   },
   weight: {
     type: Number,
