@@ -117,3 +117,41 @@ merchantsRouter.patch("/merchants/:id", async (req, res) => {
     }
   }
 })
+
+/**
+ * Deletes a merchant from the database with the information of the query
+ */
+
+merchantsRouter.delete("/merchants", async (req, res) => {
+  if (!req.query.name) { // in case of no name provided
+    res.status(400).send("Please provide a name");
+    return;
+  } else {
+    Merchant.findOneAndDelete({name: req.query.name?.toString()}).then((merchant) => {
+      if (!merchant) { // in case of no merchant to delete found
+        res.status(404).send("No merchant found");
+      } else {
+        res.send(merchant);
+      }
+    }).catch(() => {
+      res.status(500).send();
+    });
+  }
+})
+
+/**
+ * Deletes a merchant from the database with the given id of mongoDB
+ */
+
+merchantsRouter.delete("/merchants/:id", async (req, res) => {
+  try {
+    const merchant = await Merchant.findByIdAndDelete(req.params.id);
+    if (!merchant) {
+      res.status(404).send();
+      return;
+    }
+    res.send(merchant);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+})
