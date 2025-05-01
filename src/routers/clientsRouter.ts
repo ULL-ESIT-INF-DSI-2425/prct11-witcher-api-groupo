@@ -1,0 +1,109 @@
+import express from "express";
+import { Client } from "../models/clientModel.js";
+
+export const clientRouter = express.Router();
+
+clientRouter.post("/hunters", async (req, res) => {
+  const client = new Client(req.body);
+  try {
+    await client.save();
+    res.status(201).send(client);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+})
+
+clientRouter.get("/hunters", async (req, res) => {
+  const filter = req.query.name
+  ? { name: req.query.name.toString() }
+  : {};
+
+  try {
+    const clients = await Client.find(filter);
+
+    if(clients.length !== 0){
+      res.send(clients);
+    } else {
+      res.status(404).send();
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+clientRouter.get("/hunters/:id", async (req, res) => {
+  try {
+    const client = await Client.findById(req.params.id);
+    if (!client) {
+      res.status(404).send();
+      return;
+    }
+    res.send(client);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+clientRouter.patch("/hunters", async (req, res) => {
+  if(!req.query.name){
+    res.status(400).send({
+      error: "A name must be provided",
+    });
+  } else {
+    const allowedUpdates = ["id", "name", "race", "location"];
+    const actualUpdates = Object.keys(req.body);
+    const isValidUpdate = actualUpdates.every((update) => 
+      allowedUpdates.includes(update),
+    );
+
+    if(!isValidUpdate){
+      res.status(400).send({
+        error: "Update is not permitted",
+      });
+    } else {
+      try {
+        const client = await Client.findOneAndUpdate(
+          {
+            name: req.query.name.toString(),
+          },
+          req.body,
+          {
+            new: true,
+            runValidators: true,
+          },
+        );
+
+        if(client){
+          res.send(client);
+        } else {
+          res.status(404).send();
+        }
+      } catch (error) {
+        res.status(500).send(error);
+      }
+    }
+  }
+});
+
+clientRouter.delete("/hunters", async (req, res) => {
+  if(!req.query.name){
+    res.status(400).send({
+      error: "A username must be provided",
+    });
+  } else {
+    try {
+      const client = await Client.findOne({
+        name: req.query.name.toString(),
+      });
+
+      if(!client){
+        res.status(404).send();
+      } else {
+        await Client.findByIdAndDelete(client._id);
+        res.status(201).send(client);
+      }
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+});
