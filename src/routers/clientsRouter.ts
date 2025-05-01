@@ -1,5 +1,6 @@
 import express from "express";
 import { Client } from "../models/clientModel.js";
+import { Merchant } from "../models/merchantModel.js";
 
 export const clientRouter = express.Router();
 
@@ -85,10 +86,44 @@ clientRouter.patch("/hunters", async (req, res) => {
   }
 });
 
+clientRouter.patch("/hunters/:id", async (req, res) => {
+  if(!req.body || Object.keys(req.body).length === 0){
+    res.status(400).send("A body must be provided");
+    return;
+  } else {
+    const allowedUpdates = ["id", "name", "race", "location"];
+    const actualUpdates = Object.keys(req.body);
+    const isValidUpdate = actualUpdates.every((update) => 
+      allowedUpdates.includes(update),
+    );
+
+    if(!isValidUpdate){
+      res.status(400).send("Update is not permitted");
+      return;
+    } else {
+      Client.findByIdAndUpdate(
+        Object(req.params.id),
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        }).then((client) => {
+        if(!client){
+          res.status(404).send("No client found");
+        } else {
+          res.status(201).send(client);
+        }
+      }).catch(() => {
+        res.status(500).send();
+      });
+    }
+  }
+});
+
 clientRouter.delete("/hunters", async (req, res) => {
   if(!req.query.name){
     res.status(400).send({
-      error: "A username must be provided",
+      error: "A name must be provided",
     });
   } else {
     try {
@@ -105,5 +140,18 @@ clientRouter.delete("/hunters", async (req, res) => {
     } catch (error) {
       res.status(500).send(error);
     }
+  }
+});
+
+clientRouter.delete("/hunters/:id", async (req, res) => {
+  try {
+    const client = await Client.findByIdAndDelete(req.params.id);
+    if (!client) {
+      res.status(404).send();
+      return;
+    } 
+    res.status(201).send(client);
+  } catch (error) {
+    res.status(500).send(error);
   }
 });
