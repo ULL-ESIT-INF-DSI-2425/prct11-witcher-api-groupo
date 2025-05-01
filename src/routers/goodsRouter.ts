@@ -30,19 +30,23 @@ goodsRouter.get("/goods", async (req, res) => {
 });
 
 
-// NO SE POR QUE NO ME DEJA HACER EL GET CON EL ID
-// ME SALE UN ERROR DE COMPILACION DE SOBRECARGA DE METODO
-// /**
-//  * Finds a good from the database with the given id of mongoDB
-//  */
-// goodsRouter.get('/goods/:id', async (req, res) => {
-//   try {
-//     const good = await Good.findById(req.params.id);
-//     if (!good) {
-//       return res.status(404).send();
-//     }
-//     res.send(good);
-//   } catch (error) {
-//     res.status(500).send(error);
-//   }
-// });
+/**
+ * Finds a good from the database with the given id of mongoDB
+ */
+goodsRouter.get('/goods/:id', async (req, res) => {
+  try {
+    const good = await Good.findById(req.params.id);
+    if (!good) {
+      res.status(404).send();
+      return;
+    }
+    res.send(good);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+/**
+ * Updates a good from the database with the information of the query
+ */
+
