@@ -1,9 +1,12 @@
 import express from "express";
 import { Client } from "../models/clientModel.js";
-import { Merchant } from "../models/merchantModel.js";
+//import { Merchant } from "../models/merchantModel.js";
 
 export const clientRouter = express.Router();
 
+/**
+ * Post a new client to the database
+ */
 clientRouter.post("/hunters", async (req, res) => {
   const client = new Client(req.body);
   try {
@@ -12,17 +15,18 @@ clientRouter.post("/hunters", async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
-})
+});
 
+/**
+ * Finds a client from the database matching the query
+ */
 clientRouter.get("/hunters", async (req, res) => {
-  const filter = req.query.name
-  ? { name: req.query.name.toString() }
-  : {};
+  const filter = req.query.name ? { name: req.query.name.toString() } : {};
 
   try {
     const clients = await Client.find(filter);
 
-    if(clients.length !== 0){
+    if (clients.length !== 0) {
       res.send(clients);
     } else {
       res.status(404).send();
@@ -32,6 +36,9 @@ clientRouter.get("/hunters", async (req, res) => {
   }
 });
 
+/**
+ * Finds a client from the database with the given id of mongoDB
+ */
 clientRouter.get("/hunters/:id", async (req, res) => {
   try {
     const client = await Client.findById(req.params.id);
@@ -45,19 +52,22 @@ clientRouter.get("/hunters/:id", async (req, res) => {
   }
 });
 
+/**
+ * Updates a client from the database with the information of the query
+ */
 clientRouter.patch("/hunters", async (req, res) => {
-  if(!req.query.name){
+  if (!req.query.name) {
     res.status(400).send({
       error: "A name must be provided",
     });
   } else {
     const allowedUpdates = ["id", "name", "race", "location"];
     const actualUpdates = Object.keys(req.body);
-    const isValidUpdate = actualUpdates.every((update) => 
+    const isValidUpdate = actualUpdates.every((update) =>
       allowedUpdates.includes(update),
     );
 
-    if(!isValidUpdate){
+    if (!isValidUpdate) {
       res.status(400).send({
         error: "Update is not permitted",
       });
@@ -74,7 +84,7 @@ clientRouter.patch("/hunters", async (req, res) => {
           },
         );
 
-        if(client){
+        if (client) {
           res.send(client);
         } else {
           res.status(404).send();
@@ -86,42 +96,47 @@ clientRouter.patch("/hunters", async (req, res) => {
   }
 });
 
+/**
+ * Updates a client from the database with the information of the query
+ */
 clientRouter.patch("/hunters/:id", async (req, res) => {
-  if(!req.body || Object.keys(req.body).length === 0){
+  if (!req.body || Object.keys(req.body).length === 0) {
     res.status(400).send("A body must be provided");
     return;
   } else {
     const allowedUpdates = ["id", "name", "race", "location"];
     const actualUpdates = Object.keys(req.body);
-    const isValidUpdate = actualUpdates.every((update) => 
+    const isValidUpdate = actualUpdates.every((update) =>
       allowedUpdates.includes(update),
     );
 
-    if(!isValidUpdate){
+    if (!isValidUpdate) {
       res.status(400).send("Update is not permitted");
       return;
     } else {
-      Client.findByIdAndUpdate(
-        Object(req.params.id),
-        req.body,
-        {
-          new: true,
-          runValidators: true,
-        }).then((client) => {
-        if(!client){
-          res.status(404).send("No client found");
-        } else {
-          res.status(201).send(client);
-        }
-      }).catch(() => {
-        res.status(500).send();
-      });
+      Client.findByIdAndUpdate(Object(req.params.id), req.body, {
+        new: true,
+        runValidators: true,
+      })
+        .then((client) => {
+          if (!client) {
+            res.status(404).send("No client found");
+          } else {
+            res.status(201).send(client);
+          }
+        })
+        .catch(() => {
+          res.status(500).send();
+        });
     }
   }
 });
 
+/**
+ * Deletes a client from the database with the given id of mongoDB
+ */
 clientRouter.delete("/hunters", async (req, res) => {
-  if(!req.query.name){
+  if (!req.query.name) {
     res.status(400).send({
       error: "A name must be provided",
     });
@@ -131,7 +146,7 @@ clientRouter.delete("/hunters", async (req, res) => {
         name: req.query.name.toString(),
       });
 
-      if(!client){
+      if (!client) {
         res.status(404).send();
       } else {
         await Client.findByIdAndDelete(client._id);
@@ -143,13 +158,16 @@ clientRouter.delete("/hunters", async (req, res) => {
   }
 });
 
+/**
+ * Deletes a client from the database with the given id of mongoDB
+ */
 clientRouter.delete("/hunters/:id", async (req, res) => {
   try {
     const client = await Client.findByIdAndDelete(req.params.id);
     if (!client) {
       res.status(404).send();
       return;
-    } 
+    }
     res.status(201).send(client);
   } catch (error) {
     res.status(500).send(error);
