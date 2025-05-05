@@ -1,6 +1,6 @@
 import express from "express";
 import { Client } from "../models/clientModel.js";
-//import { Merchant } from "../models/merchantModel.js";
+import { isObjectIdOrHexString } from "mongoose";
 
 export const clientRouter = express.Router();
 
@@ -29,7 +29,7 @@ clientRouter.get("/hunters", async (req, res) => {
     if (clients.length !== 0) {
       res.send(clients);
     } else {
-      res.status(404).send();
+      res.status(404).send("No clients found");
     }
   } catch (error) {
     res.status(500).send(error);
@@ -60,6 +60,10 @@ clientRouter.patch("/hunters", async (req, res) => {
     res.status(400).send({
       error: "A name must be provided",
     });
+  } else if(!req.body || Object.keys(req.body).length === 0){
+    res.status(400).send({
+      error: "A body must be provided",
+    });
   } else {
     const allowedUpdates = ["id", "name", "race", "location"];
     const actualUpdates = Object.keys(req.body);
@@ -72,7 +76,6 @@ clientRouter.patch("/hunters", async (req, res) => {
         error: "Update is not permitted",
       });
     } else {
-      try {
         const client = await Client.findOneAndUpdate(
           {
             name: req.query.name.toString(),
@@ -82,16 +85,15 @@ clientRouter.patch("/hunters", async (req, res) => {
             new: true,
             runValidators: true,
           },
-        );
-
-        if (client) {
-          res.send(client);
-        } else {
-          res.status(404).send();
-        }
-      } catch (error) {
-        res.status(500).send(error);
-      }
+        ).then((client) => {
+          if (!client) {
+            res.status(404).send("No client found");
+          } else {
+            res.status(201).send(client);
+          }
+        }).catch(() => {
+          res.status(500).send();
+        });
     }
   }
 });
@@ -104,7 +106,7 @@ clientRouter.patch("/hunters/:id", async (req, res) => {
     res.status(400).send("A body must be provided");
     return;
   } else {
-    const allowedUpdates = ["id", "name", "race", "location"];
+    const allowedUpdates = ["name", "race", "location"];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) =>
       allowedUpdates.includes(update),
@@ -117,15 +119,13 @@ clientRouter.patch("/hunters/:id", async (req, res) => {
       Client.findByIdAndUpdate(Object(req.params.id), req.body, {
         new: true,
         runValidators: true,
-      })
-        .then((client) => {
+      }).then((client) => {
           if (!client) {
             res.status(404).send("No client found");
           } else {
             res.status(201).send(client);
           }
-        })
-        .catch(() => {
+        }).catch(() => {
           res.status(500).send();
         });
     }
