@@ -10,6 +10,8 @@ import { GoodSchema } from "./goodSchema.js";
 import { GoodDocument } from "../interfaces/goodDocument.js";
 import { Merchant } from "../models/merchantModel.js";
 import { Client } from "../models/clientModel.js";
+import { goodsRouter } from "../routers/goodsRouter.js";
+import { Good } from "../models/goodModel.js";
 
 export const TransactionSchema = new Schema<TransactionDocument>({
   id: {
@@ -71,18 +73,29 @@ export const TransactionSchema = new Schema<TransactionDocument>({
       }
     }
   },
-  goods: {
-    type: [GoodSchema],
-    required: true,
-    validate: {
-      validator: (goods: GoodDocument[]) => {
-        if (goods.length === 0) {
-          throw new Error("Goods array cannot be empty");
-        }
-        return true;
+  goods: [
+    {
+      good: {
+        type: Schema.Types.ObjectId,
+        ref: "Good",
+        required: true,
+        validate: {
+          validator: async (GoodId: Types.ObjectId) => {
+            const good = await Good.findById(GoodId);
+            if (!good) {
+              throw new Error("Good does not exist");
+            }
+            return !!good; // Return true if the good exists
+          },
+        },
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1,
       },
     },
-  },
+  ],
   date: {
     type: Date,
     required: true,
