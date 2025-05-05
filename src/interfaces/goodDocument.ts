@@ -19,4 +19,5 @@ export interface GoodDocument extends Document {
   material: Materials;
   weight: number;
   value: number;
+  stock: number;
 }

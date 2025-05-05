@@ -72,4 +72,13 @@ export const GoodSchema = new Schema<GoodDocument>({
       }
     },
   },
+  stock: {
+    type: Number,
+    required: true,
+    validate: (value: number) => {
+      if (value < 1 || !Number.isInteger(value)) {
+        throw new Error("Good stock must be a positive integer greater than 0");
+      }
+    },
+  },
 });

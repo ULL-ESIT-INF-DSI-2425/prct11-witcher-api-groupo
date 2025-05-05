@@ -7,10 +7,20 @@ export const goodsRouter = express.Router();
  * Post a new good to the database
  */
 goodsRouter.post("/goods", async (req, res) => {
-  const good = new Good(req.body);
   try {
-    await good.save();
-    res.status(201).send(good);
+    const { name, stock } = req.body;
+    
+    const existingGood = await Good.findOne({ name });
+
+    if (existingGood) {
+      existingGood.stock += stock || 0;
+      await existingGood.save();
+      res.status(200).send(existingGood);
+    } else {
+      const good = new Good(req.body);
+      await good.save();
+      res.status(201).send(good);
+    }
   } catch (error) {
     res.status(500).send(error);
   }
@@ -65,6 +75,7 @@ goodsRouter.patch("/goods", async (req, res) => {
       "material",
       "weight",
       "value",
+      "stock"
     ];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) =>
@@ -108,6 +119,7 @@ goodsRouter.patch("/goods/:id", async (req, res) => {
       "material",
       "weight",
       "value",
+      "stock"
     ];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) =>
