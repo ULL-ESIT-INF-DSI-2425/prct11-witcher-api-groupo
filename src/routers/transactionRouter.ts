@@ -13,6 +13,7 @@ export const transactionRouter = express.Router();
  * Post a new transaction (sold) to the database
  */
 
+
 transactionRouter.post("/transactions/sell", async (req, res) => {
   try {
     const { mercahntName, items} = req.body;
