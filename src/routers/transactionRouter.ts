@@ -19,7 +19,8 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
     const { mercahntName, items} = req.body;
     const merchant = await Merchant.findOne({ name: mercahntName });
     if (!merchant) {
-      return res.status(404).send({ error: "Merchant not found" });
+      res.status(404).send({ error: "Merchant not found" });
+      return;
     }
     const goodsInTransaction = []; // Array to store the goods in the transaction
     let totalValue = 0; // Initialize total value to 0
@@ -50,7 +51,7 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
   
         } catch (err) {
           console.error(err);
-          return res.status(500).send({ error: "Error saving good" });
+          res.status(500).send({ error: "Error saving good" });
         }
       } // TODO: aqui va el else de si ya existe el good pero hace falta añadir la propiedad de stock a los goods
     }
@@ -68,3 +69,6 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
     res.status(500).send({ error: "Internal server error" });
   }
 });
+
+
+
