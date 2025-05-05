@@ -2,15 +2,15 @@ import { TransactionDocument } from "../interfaces/transactionDocument.js";
 import validator from "validator";
 import { Schema, Types } from "mongoose";
 import { TransactionType } from "../enums/transactionType.js";
-import { GoodSchema } from "./goodSchema.js";
+// import { GoodSchema } from "./goodSchema.js";
 // import { ClientSchema } from "./clientSchema.js";
 // import { MerchantSchema } from "./merchantSchema.js";
 // import { ClientDocument } from "../interfaces/clientDocument.js";
 // import { MerchantDocument } from "../interfaces/merchantDocument.js";
-import { GoodDocument } from "../interfaces/goodDocument.js";
+// import { GoodDocument } from "../interfaces/goodDocument.js";
 import { Merchant } from "../models/merchantModel.js";
 import { Client } from "../models/clientModel.js";
-import { goodsRouter } from "../routers/goodsRouter.js";
+// import { goodsRouter } from "../routers/goodsRouter.js";
 import { Good } from "../models/goodModel.js";
 
 export const TransactionSchema = new Schema<TransactionDocument>({
