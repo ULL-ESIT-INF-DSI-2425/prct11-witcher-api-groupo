@@ -3,6 +3,8 @@ import request from 'supertest';
 import { app } from '../src/app.js';
 import { Client } from '../src/models/clientModel.js';
 
+let example;
+
 const firstClient = {
   id: 9,
   name: 'ClientePrueba',
@@ -12,7 +14,7 @@ const firstClient = {
 
 beforeEach(async () => {
   await Client.deleteMany();
-  await new Client(firstClient).save();
+  example = await new Client(firstClient).save();
 });
 
 describe('Client API', () => {
@@ -63,7 +65,7 @@ describe('Client API', () => {
     await request(app).get(`/hunters/${example.body._id}`).expect(202);
   });
 
-  it('Should not find an existing client by id', async () => {
+  it('Should not find an inexisting client by id', async () => {
     await request(app).get('/hunters/6819e6be2fdd147e408e7b80').expect(404);
   });
 
@@ -118,6 +120,45 @@ describe('Client API', () => {
       }).expect(404);
   });
 
+  //
+
+  it('Should successfully modify an existing client by his id', async () => {
+    await request(app)
+      .patch(`/hunters/${example._id}`)
+      .send({
+        name: 'ClientePrueba',
+        race: 'elf',
+        location: "redania"
+      }).expect(201);
+  });
+
+  it('Should send an error for not providing a body', async () => {
+    await request(app)
+    .patch(`/hunters/${example._id}`)
+      .send({})
+      .expect(400);
+  });
+
+  it('Should unsuccessfully modify an existing client by his id', async () => {
+    await request(app)
+    .patch(`/hunters/${example._id}`)
+      .send({
+        name: 'ClientePrueba',
+        race: 'dragon',
+        location: "redania"
+      }).expect(500);
+  });
+
+  it('Should not find a client to modify it by his id', async () => {
+    await request(app)
+      .patch('/hunters/6819e6be2fdd147e428e7b80')
+      .send({
+        name: 'Geralt of Rivia',
+        race: 'dwarf',
+        location: "redania"
+      }).expect(404);
+  });
+
   it('Should successfully delete an existing client', async () => {
     await request(app)
       .delete('/hunters?name=ClientePrueba')
@@ -136,5 +177,16 @@ describe('Client API', () => {
       .expect(400);
   });
 
+  it('Should successfully delete an existing client by his id', async () => {
+    await request(app)
+      .delete(`/hunters/${example._id}`)
+      .expect(201);
+  });
+
+  it('Should unsuccessfully delete an inexisting client by his id', async () => {
+    await request(app)
+      .delete('/hunters/6819e6be2fdd147e428e7b80')
+      .expect(404);
+  });
 
 });
