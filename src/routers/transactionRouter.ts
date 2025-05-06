@@ -16,7 +16,8 @@ export const transactionRouter = express.Router();
 
 transactionRouter.post("/transactions/buy", async (req, res) => {
   try {
-    const { merchantName, items} = req.body;
+    const { id: transactionId, merchantName, items} = req.body;
+    // destructure the request body
     const merchant = await Merchant.findOne({ name: merchantName }); // Find the merchant by name
     if (!merchant) {
       res.status(404).send({ error: "Merchant not found" });
@@ -59,14 +60,18 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
           console.error(err);
           res.status(500).send({ error: "Error saving good" });
         }
-      } else {
+      } else if (good) {
+        console.log("Good already exists");
         goodsInTransaction.push({ good: good._id, quantity }); // Add the existing good to the transaction
         totalValue += good.value * quantity; // Update the total value (at the end will be the total money of the transaction)
         // aumentar el stock del good
-        good.stock += quantity; // Increase the stock of the good
+        good.stock = good.stock + quantity; // Update the stock of the good
+        // actualizar el good en la base de datos
+        await good.save();
       }
     }
     const transaction = new Transaction({
+      id: transactionId,
       type: TransactionType.BUY,
       merchant: merchant._id,
       goods: goodsInTransaction,
