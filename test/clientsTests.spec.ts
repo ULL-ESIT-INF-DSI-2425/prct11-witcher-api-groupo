@@ -1,4 +1,4 @@
-import { describe, it, beforeAll, expect } from 'vitest';
+import { describe, it, beforeEach, expect } from 'vitest';
 import request from 'supertest';
 import { app } from '../src/app.js';
 import { Client } from '../src/models/clientModel.js';
@@ -10,7 +10,7 @@ const firstClient = {
   location: 'redania',
 }
 
-beforeAll(async () => {
+beforeEach(async () => {
   await Client.deleteMany();
   await new Client(firstClient).save();
 });
@@ -43,19 +43,24 @@ describe('Client API', () => {
   });
 
   it('Should find an existing client', async () => {
-    await request(app).get('/hunters?name=Geralt of Rivia').expect(202);
+    await request(app).get('/hunters?name=ClientePrueba').expect(202);
   });
 
   it('Should not find an existing client', async () => {
     await request(app).get('/hunters?name=Garalt').expect(404);
   });
 
-  it('Should send an error while find an existing client', async () => {
-    await request(app).get('/hunters?name= ').expect(500);
-  });
-
   it('Should find an existing client by id', async () => {
-    await request(app).get('/hunters/6819e6be2fdd147e408e7b80').expect(202);
+    const example = await request(app)
+    .post('/hunters')
+    .send({
+      id: 13,
+      name: 'Geraldo de Rovia',
+      race: 'elf',
+      location: "novigrad"
+    })
+
+    await request(app).get(`/hunters/${example.body._id}`).expect(202);
   });
 
   it('Should not find an existing client by id', async () => {
@@ -64,41 +69,72 @@ describe('Client API', () => {
 
   it('Should successfully modify an existing client', async () => {
     await request(app)
-      .patch('/hunters?name=Geralt of Rivia')
+      .patch('/hunters?name=ClientePrueba')
       .send({
         id: 3,
-        name: 'Geralt of Rivia',
+        name: 'ClientePrueba',
         race: 'elf',
         location: "redania"
       }).expect(201);
   });
 
-  it('Should unsuccessfully modify an existing client', async () => {
+  it('Should send an error for not providing a name', async () => {
     await request(app)
-      .post('/hunters?name=Geralt of Rovia')
+      .patch('/hunters')
       .send({
         id: 3,
-        name: 'Geralt of Rivia',
+        name: 'ClientePrueba',
+        race: 'elf',
+        location: "redania"
+      }).expect(400);
+  });
+
+  it('Should send an error for not providing a body', async () => {
+    await request(app)
+      .patch('/hunters?name=ClientePrueba')
+      .send({})
+      .expect(400);
+  });
+
+  it('Should unsuccessfully modify an existing client', async () => {
+    await request(app)
+      .patch('/hunters?name=ClientePrueba')
+      .send({
+        id: 3,
+        name: 'ClientePrueba',
         race: 'dragon',
         location: "redania"
       }).expect(500);
   });
 
+  it('Should not find a client to modify it', async () => {
+    await request(app)
+      .patch('/hunters?name=GaraltofRivia')
+      .send({
+        id: 3,
+        name: 'Geralt of Rivia',
+        race: 'dwarf',
+        location: "redania"
+      }).expect(404);
+  });
+
   it('Should successfully delete an existing client', async () => {
     await request(app)
-      .delete('/hunters?name=Geralt of Rivia')
+      .delete('/hunters?name=ClientePrueba')
       .expect(201);
   });
 
-  it('Should unsuccessfully delete an existing client', async () => {
+  it('Should unsuccessfully delete an inexisting client', async () => {
     await request(app)
-      .delete('/hunters?name=Garalt of Rivia')
+      .delete('/hunters?name=Geralt of Rivia')
       .expect(404);
   });
 
-  it('Should unsuccessfully delete an existing client', async () => {
+  it('Should not find a client to remove it', async () => {
     await request(app)
       .delete('/hunters')
       .expect(400);
   });
+
+
 });

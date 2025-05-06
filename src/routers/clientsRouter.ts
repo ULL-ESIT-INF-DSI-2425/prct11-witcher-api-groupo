@@ -26,7 +26,7 @@ clientRouter.get("/hunters", async (req, res) => {
     const clients = await Client.find(filter);
 
     if (clients.length !== 0) {
-      res.status(201).send(clients);
+      res.status(202).send(clients);
     } else {
       res.status(404).send("No clients found");
     }
@@ -45,7 +45,7 @@ clientRouter.get("/hunters/:id", async (req, res) => {
       res.status(404).send();
       return;
     }
-    res.status(201).send(client);
+    res.status(202).send(client);
   } catch (error) {
     res.status(500).send(error);
   }
