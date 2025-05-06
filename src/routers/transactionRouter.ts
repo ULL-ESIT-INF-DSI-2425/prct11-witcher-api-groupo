@@ -30,38 +30,22 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
     const goodsInTransaction = []; // Array to store the goods in the transaction
     let totalValue = 0; // Initialize total value to 0
     for (const item of items) { // Iterate over each item in the items array
-      const { 
-        name: goodName,
-        quantity,
-        value: goodValue,
-        material, 
-        weight,
-        description,
-        id: goodId,
-        stock,
-      } = item; // Destructure the item object
+      const { name: goodName, quantity } = item; // Destructure the item to get the name and quantity
       let good = await Good.findOne({ name: goodName }); // Find the good by name
       if (!good) {
         const newGood = new Good({
-          id: goodId,
-          name: goodName,
-          value: goodValue,
-          material,
-          weight,
-          description,
-          stock,
+          ...item, // Create a new good with the item properties
         });
         try {
           const savedGood = await newGood.save(); // Save the new good to the database
           goodsInTransaction.push({ good: savedGood._id, quantity }); // Add the new good to the transaction
-          totalValue += goodValue * quantity; // Update the total value (at the end will be the total money of the transaction)
-  
+          totalValue += savedGood.value * quantity; // Update the total value (at the end will be the total money of the transaction)
         } catch (err) {
           console.error(err);
           res.status(500).send({ error: "Error saving good" });
         }
       } else if (good) {
-        console.log("Good already exists");
+        // console.log("Good already exists");
         goodsInTransaction.push({ good: good._id, quantity }); // Add the existing good to the transaction
         totalValue += good.value * quantity; // Update the total value (at the end will be the total money of the transaction)
         // aumentar el stock del good
@@ -82,7 +66,7 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
     res.status(201).send(transaction); // Send the transaction as a response
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Internal server error" });
+    res.status(500).send({ error: "Error adding buy transaction" });
   }
 });
 
