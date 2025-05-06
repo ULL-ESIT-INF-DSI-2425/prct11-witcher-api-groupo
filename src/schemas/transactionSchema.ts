@@ -16,7 +16,7 @@ import { Good } from "../models/goodModel.js";
 export const TransactionSchema = new Schema<TransactionDocument>({
   id: {
     type: Number,
-    required: true,
+    required: false,
     unique: true,
     trim: true,
     validate: (value: number) => {
@@ -83,6 +83,14 @@ export const TransactionSchema = new Schema<TransactionDocument>({
       },
     },
   ],
+  // array size must be 1 or more
+  // validate: {
+  //   validator: function (this: TransactionDocument) {
+  //     if (this.goods.length < 1) {
+  //       throw new Error("At least one good must be provided");
+  //     }
+  //   }
+  // },
   date: {
     type: Date,
     default: Date.now,
@@ -90,7 +98,7 @@ export const TransactionSchema = new Schema<TransactionDocument>({
   },
   totalValue: {
     type: Number,
-    required: true,
+    required: false,
     min: 0,
   },
 });
