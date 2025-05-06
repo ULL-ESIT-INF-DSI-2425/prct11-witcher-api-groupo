@@ -11,18 +11,8 @@ import {connect} from 'mongoose';
 //   console.log('Something went wrong when conecting to the database:', error);
 // });
 
-
-// este es que funciona para la base de datos local
-// connect('mongodb://127.0.0.1:27017/white-wolf-inn').then(() => {
-//   console.log('Connected to the White Wolf Inn database locally');
-// }).catch((error) => {
-//   console.log('Something went wrong when conecting to the database:', error);
-// });
-
-//esto es para poder separar la uri de la base de datos funcional y la de pruebas
-try {
-  await connect(process.env.MONGODB_URL!);
-  console.log('Connected to the White Wolf Inn database in the cloud');
-} catch (error) {
+connect('mongodb://127.0.0.1:27017/white-wolf-inn').then(() => {
+  console.log('Connected to the White Wolf Inn database locally');
+}).catch((error) => {
   console.log('Something went wrong when conecting to the database:', error);
-}
+});
