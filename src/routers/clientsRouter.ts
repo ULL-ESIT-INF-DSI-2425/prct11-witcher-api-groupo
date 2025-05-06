@@ -1,6 +1,5 @@
 import express from "express";
 import { Client } from "../models/clientModel.js";
-import { isObjectIdOrHexString } from "mongoose";
 
 export const clientRouter = express.Router();
 
@@ -27,7 +26,7 @@ clientRouter.get("/hunters", async (req, res) => {
     const clients = await Client.find(filter);
 
     if (clients.length !== 0) {
-      res.send(clients);
+      res.status(201).send(clients);
     } else {
       res.status(404).send("No clients found");
     }
@@ -46,7 +45,7 @@ clientRouter.get("/hunters/:id", async (req, res) => {
       res.status(404).send();
       return;
     }
-    res.send(client);
+    res.status(201).send(client);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -76,7 +75,7 @@ clientRouter.patch("/hunters", async (req, res) => {
         error: "Update is not permitted",
       });
     } else {
-        const client = await Client.findOneAndUpdate(
+        await Client.findOneAndUpdate(
           {
             name: req.query.name.toString(),
           },
