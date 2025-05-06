@@ -1,6 +1,6 @@
 import express from "express";
 import { Transaction } from "../models/transactionModel.js";
-// import { Client } from "../models/clientModel.js";
+import { Client } from "../models/clientModel.js";
 import { Merchant } from "../models/merchantModel.js";
 import { Good } from "../models/goodModel.js";
 import { TransactionType } from "../enums/transactionType.js";
@@ -69,6 +69,63 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
     res.status(500).send({ error: "Error adding buy transaction" });
   }
 });
+
+/**
+ * Post a new transaction (sold) to the database
+ */
+
+transactionRouter.post("/transactions/sell", async (req, res) => {
+  try {
+    const { id: transactionId, clientName, items } = req.body; // Destructure the request body
+    const client = await Client.findOne({ name: clientName }); // Find the client by name
+    if (!client) {
+      res.status(404).send({ error: "Client not found" });
+      return;
+    }
+    if (!items || items.length === 0) {
+      res.status(400).send({ error: "No items provided" });
+      return;
+    }
+    const goodsInTransaction = []; // Array to store the goods in the transaction
+    let totalValue = 0; // Initialize total value to 0
+    for (const item of items) { // Iterate over each item in the array of items implicated
+      const { name: goodName, quantity } = item;  // destructure the item to check if exist in DB
+      let good = await Good.findOne({ name: goodName }); // Find the good by name
+      if (!good) { // in case the good does not exist
+        res.status(404).send({ error: "Good not found" });
+        return;
+      }
+      if (good.stock < quantity || good.stock === 0) { // Check if the stock is enough
+        res.status(400).send({ error: "Not enough stock" });
+        return;
+      }
+      goodsInTransaction.push({ good: good._id, quantity }); // Add the existing good to the transaction
+      totalValue += good.value * quantity; // Update the total value (at the end will be the total money of the transaction)
+      // disminuir el stock del good
+      good.stock = good.stock - quantity; // Update the stock of the good
+      // actualizar el good en la base de datos
+      await good.save(); // Save the good to the database
+    }
+    const transaction = new Transaction({
+      id: transactionId,
+      type: TransactionType.SELL,
+      client: client._id,
+      goods: goodsInTransaction,
+      date: new Date(),
+      totalValue,
+    });
+    await transaction.save(); // Save the transaction to the database
+    res.status(201).send(transaction); // Send the transaction as a response
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error adding sell transaction" });
+  }
+});
+
+
+
+
 
 
 

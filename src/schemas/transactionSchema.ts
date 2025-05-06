@@ -83,14 +83,13 @@ export const TransactionSchema = new Schema<TransactionDocument>({
       },
     },
   ],
-  // array size must be 1 or more
+  // validar que el array sea mayor a 0
   // validate: {
-  //   validator: function (this: TransactionDocument) {
-  //     if (this.goods.length < 1) {
-  //       throw new Error("At least one good must be provided");
-  //     }
+  //   validate: function (this: TransactionDocument) {
+  //     return this.goods.length > 0; // Ensure the goods array has at least one item
   //   }
   // },
+
   date: {
     type: Date,
     default: Date.now,
