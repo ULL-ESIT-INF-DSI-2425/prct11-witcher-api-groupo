@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, expect } from 'vitest';
 import request from 'supertest';
-import { app } from '../src/app.js';
-import { Merchant } from '../src/models/merchantModel.js';
+import { app } from '../../src/app.js';
+import { Merchant } from '../../src/models/merchantModel.js';
 
 const firstMerchant = {
   id: 19,

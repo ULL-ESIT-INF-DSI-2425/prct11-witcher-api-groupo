@@ -1,7 +1,7 @@
 import { describe, it, beforeAll, expect } from "vitest";
 import request from "supertest";
-import { app } from "../src/app.js";
-import { Good } from "../src/models/goodModel.js";
+import { app } from "../../src/app.js";
+import { Good } from "../../src/models/goodModel.js";
 
 const firstGood = {
   id: 9,
@@ -234,6 +234,10 @@ describe("Good API", () => {
       .expect(404);
   });
 
+  it("Should not find an existing good with empty name", async () => {
+    await request(app).get("/goods/name").expect(400);
+  });
+
   it("Should send an error while find an existing good", async () => {
     await request(app).get("/goods?name= ").expect(404);
   });
@@ -254,6 +258,53 @@ describe("Good API", () => {
 
   it("Should not find an existing good by id", async () => {
     await request(app).get("/goods/123456789012345678901234").expect(404);
+  });
+
+  it("Should not find an existing good to modify", async () => {
+    await request(app)
+      .patch("/goods?name=Garalt")
+      .send({
+        id: 31,
+        name: "A wonderful good",
+        description: "This is a good",
+        material: "makaham steel",
+        weight: 12.54,
+        value: 100,
+        stock: 10,
+      })
+      .expect(404);
+  });
+    
+  it("Should not find an existing good to modify with empty name", async () => {
+    await request(app)
+      .patch("/goods?name=Golden sword")
+      .send({
+        id: 31,
+        name: "Can not modify this good _id",
+        description: "This is a good",
+        material: "makaham steel",
+        weight: 12.54,
+        value: 100,
+        stock: 10,
+        _id: "123456789012345678901234"
+      })
+      .expect(406);
+  });
+
+  it("Should manage a PATCH Bad Request (400)", async () => {
+    await request(app)
+    .patch("/goods/name")
+    .send({
+      id: 31,
+      name: "Can not modify this good _id",
+      description: "This is a good",
+      material: "makaham steel",
+      weight: 12.54,
+      value: 100,
+      stock: 10,
+      _id: "123456789012345678901234"
+    })
+    .expect(400);
   });
 
   it("Should successfully modify an existing good", async () => {
@@ -339,6 +390,46 @@ describe("Good API", () => {
     });
   });
 
+  it("Should not find an existing good with unidentified ID", async () => {
+    await request(app)
+      .patch("/goods/123456789012345678901234")
+      .send({
+        id: 31,
+        name: "Can not modify this good _id",
+        description: "This is a good",
+        material: "makaham steel",
+        weight: 12.54,
+        value: 100,
+        stock: 10,
+        _id: "123456789012345678901234"
+      })
+      .expect(404);
+  });
+
+  it("Should not modify and invalid attribute of a good with an ID", async () => {
+    const example = await request(app).post("/goods").send({
+      id: 77,
+      name: "A horrendous good",
+      description: "This is a horrendous good",
+      material: "makaham steel",
+      weight: 12.54,
+      value: 100,
+      stock: 10,
+    }).expect(201);
+
+    await request(app)
+      .patch(`/goods/${example.body._id}`)
+      .send({
+        name: "Changed good by id",
+        description: "This is a changed good by id",
+        material: "gold",
+        _id: "1456789012345678901234"
+      })
+      .expect(406);
+  });
+
+
+
   it("Should successfully delete an existing good", async () => {
     await request(app).delete("/goods?name=Silver ring").expect(200);
     await request(app)
@@ -349,6 +440,10 @@ describe("Good API", () => {
     await request(app)
       .delete("/goods?weight=20.5&value=1060&stock=2")
       .expect(200);
+  });
+
+  it("Should not delete a non-existing good", async () => {
+    await request(app).delete("/goods/name").expect(400);
   });
 
   it('Should unsuccessfully delete an existing good', async () => {

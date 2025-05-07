@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, expect } from 'vitest';
 import request from 'supertest';
-import { app } from '../src/app.js';
-import { Client } from '../src/models/clientModel.js';
+import { app } from '../../src/app.js';
+import { Client } from '../../src/models/clientModel.js';
 
 const firstClient = {
   id: 9,
