@@ -3,8 +3,6 @@ import request from 'supertest';
 import { app } from '../src/app.js';
 import { Client } from '../src/models/clientModel.js';
 
-let example;
-
 const firstClient = {
   id: 9,
   name: 'ClientePrueba',
@@ -14,7 +12,7 @@ const firstClient = {
 
 beforeEach(async () => {
   await Client.deleteMany();
-  example = await new Client(firstClient).save();
+  await new Client(firstClient).save();
 });
 
 describe('Client API', () => {
@@ -60,7 +58,7 @@ describe('Client API', () => {
       name: 'Geraldo de Rovia',
       race: 'elf',
       location: "novigrad"
-    })
+    });
 
     await request(app).get(`/hunters/${example.body._id}`).expect(202);
   });
@@ -120,28 +118,54 @@ describe('Client API', () => {
       }).expect(404);
   });
 
-  //
-
   it('Should successfully modify an existing client by his id', async () => {
+    const exampleID = new Client({
+      id: 4,
+      name: 'Geraldo de Rovia',
+      race: 'halveelf',
+      location: "novigrad"
+    });
+
+    const response = await exampleID.save();
+    
     await request(app)
-      .patch(`/hunters/${example._id}`)
+      .patch(`/hunters/${response._id}`)
       .send({
-        name: 'ClientePrueba',
         race: 'elf',
         location: "redania"
       }).expect(201);
   });
 
   it('Should send an error for not providing a body', async () => {
+
+    const exampleID = new Client({
+      id: 5,
+      name: 'Yennefer of Vengerberg',
+      race: 'halveelf',
+      location: "novigrad"
+    });
+
+    const response = await exampleID.save();
+
     await request(app)
-    .patch(`/hunters/${example._id}`)
+    .patch(`/hunters/${response._id}`)
       .send({})
       .expect(400);
   });
 
   it('Should unsuccessfully modify an existing client by his id', async () => {
+    
+    const exampleID = new Client({
+      id: 5,
+      name: 'Yennefer of Vengerberg',
+      race: 'halveelf',
+      location: "novigrad"
+    });
+
+    const response = await exampleID.save();
+
     await request(app)
-    .patch(`/hunters/${example._id}`)
+    .patch(`/hunters/${response._id}`)
       .send({
         name: 'ClientePrueba',
         race: 'dragon',
@@ -178,8 +202,18 @@ describe('Client API', () => {
   });
 
   it('Should successfully delete an existing client by his id', async () => {
+    
+    const exampleID = new Client({
+      id: 5,
+      name: 'Yennefer of Vengerberg',
+      race: 'halveelf',
+      location: "novigrad"
+    });
+
+    const response = await exampleID.save();
+    
     await request(app)
-      .delete(`/hunters/${example._id}`)
+      .delete(`/hunters/${response._id}`)
       .expect(201);
   });
 

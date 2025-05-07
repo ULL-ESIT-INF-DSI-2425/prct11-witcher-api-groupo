@@ -3,8 +3,6 @@ import request from 'supertest';
 import { app } from '../src/app.js';
 import { Merchant } from '../src/models/merchantModel.js';
 
-let example;
-
 const firstMerchant = {
   id: 19,
   name: 'MercaderPrueba',
@@ -14,7 +12,7 @@ const firstMerchant = {
 
 beforeEach(async () => {
   await Merchant.deleteMany();
-  example = await new Merchant(firstMerchant).save();
+  await new Merchant(firstMerchant).save();
 });
 
 describe('Merchant API', () => {
@@ -113,26 +111,53 @@ describe('Merchant API', () => {
       }).expect(404);
   });
 
-  /*
-  it('Should successfully modify an existing merchant by id', async() => {
+  it('Should successfully modify an existing merchant by his id', async () => {
+    const exampleID = new Merchant({
+      id: 13,
+      name: 'MercaderDeRivia',
+      location: 'redania',
+      merchantType: 'alchemist'
+    });
+
+    const response = await exampleID.save();
+    
     await request(app)
-      .patch(`/hunters/${example._id}`)
+      .patch(`/merchants/${response._id}`)      
       .send({
-        location: 'enchanter',
-        merchantType: 'gobernor'
+        location: 'nilfgaard',
+        merchantType: 'alchemist'
       }).expect(200);
-  })
-  */
+  });
+  
 
   it('Should send an error for not providing a body', async() => {
+    const exampleID = new Merchant({
+      id: 13,
+      name: 'MercaderDeRivia',
+      location: 'redania',
+      merchantType: 'alchemist'
+    });
+
+    const response = await exampleID.save();
+
     await request(app)
-      .patch(`/merchants/${example._id}`)
+      .patch(`/merchants/${response._id}`)
       .send({}).expect(400);
   });
 
   it('Should unsuccessfully modify an existing merchant by id', async() => {
+    
+    const exampleID = new Merchant({
+      id: 13,
+      name: 'MercaderDeRivia',
+      location: 'redania',
+      merchantType: 'alchemist'
+    });
+
+    const response = await exampleID.save();
+    
     await request(app)
-      .patch(`/merchants/${example._id}`)
+      .patch(`/merchants/${response._id}`)
       .send({
         id: 3,
         name: 'MercaderPrueba',
@@ -169,8 +194,18 @@ describe('Merchant API', () => {
   });
 
   it('Should successfully delete an existing merchant', async() => {
+    
+    const exampleID = new Merchant({
+      id: 13,
+      name: 'MercaderDeRivia',
+      location: 'redania',
+      merchantType: 'alchemist'
+    });
+
+    const response = await exampleID.save();
+
     await request(app)
-      .delete(`/merchants/${example._id}`)
+      .delete(`/merchants/${response._id}`)
       .expect(200);
   });
 
