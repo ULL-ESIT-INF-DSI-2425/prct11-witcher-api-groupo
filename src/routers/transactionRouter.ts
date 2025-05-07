@@ -34,7 +34,14 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
       let good = await Good.findOne({ name: goodName }); // Find the good by name
       if (!good) {
         const newGood = new Good({
-          ...item, // Create a new good with the item properties
+          // ...item, // Create a new good with the item properties
+          id: item.id,
+          name: goodName,
+          description: item.description,
+          material: item.material,
+          weight: item.weight,
+          value: item.value,
+          stock: quantity,
         });
         try {
           const savedGood = await newGood.save(); // Save the new good to the database
@@ -62,8 +69,15 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
       date: new Date(),
       totalValue,
     });
+    // await transaction.save(); // Save the transaction to the database
+    // populate the goods and the merchan
+    // const populatedTransaction = await transaction.populate("goods.good")
+    // res.status(201).send(populatedTransaction); // Send the transaction as a response
     await transaction.save(); // Save the transaction to the database
-    res.status(201).send(transaction); // Send the transaction as a response
+    const populatedTransaction = await Transaction.findById(transaction._id)
+      .populate("merchant", "id name") // Populate specific merchant fields
+      .populate("goods.good"); // Populate specific good fields
+    res.status(201).send(populatedTransaction); // Send the populated transaction as a response
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error adding buy transaction" });
@@ -115,11 +129,31 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
       totalValue,
     });
     await transaction.save(); // Save the transaction to the database
-    res.status(201).send(transaction); // Send the transaction as a response
+    const populatedTransaction = await Transaction.findById(transaction._id)
+      .populate("client", "id name") // Populate specific client fields
+      .populate("goods.good"); // Populate specific good fields
+    res.status(201).send(populatedTransaction); // Send the transaction as a response
 
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error adding sell transaction" });
+  }
+});
+
+/**
+ * Get all transactions from the database
+ */
+transactionRouter.get("/transactions", async (req, res) => {
+  try {
+    // va a buscar todas las transacciones
+    const transactions = await Transaction.find()
+      .populate("client", "id name") // Populate specific client fields
+      .populate("merchant", "id name") // Populate specific merchant fields
+      .populate("goods.good"); // Populate specific good fields
+    res.status(200).send(transactions); // Send the transactions as a response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error getting transactions" });
   }
 });
 
