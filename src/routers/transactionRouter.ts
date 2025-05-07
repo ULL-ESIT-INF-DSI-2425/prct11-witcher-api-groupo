@@ -219,22 +219,27 @@ transactionRouter.get("/transactions", async (req, res) => {
 transactionRouter.get("/transactions/:id", async (req, res) => {
   try {
     const id = req.params.id; // Get the id from the request params
-    const transaction = await Transaction.find({})
+    if (!id) {
+      res.status(400).send("Please provide an id");
+      return;
+    }
+    const transaction = await Transaction.find({
+      $or: [ // $or operator to find by client or merchant id in mongoDB
+        { client: id }, // Find by client id
+        { merchant: id }, // Find by merchant id
+      ]
+    })
       .populate("client", "id name") // Populate specific client fields
       .populate("merchant", "id name") // Populate specific merchant fields
       .populate("goods.good"); // Populate specific good fields
-  
-    const filteredTransaction = transaction.filter((transaction) => {
-      const clientMatch = transaction.client && (typeof transaction.client === "object" && transaction.client.id === id);
-      const merchantMatch = transaction.merchant && (typeof transaction.merchant === "object" && transaction.merchant.id === id);
-    });
-    if (filteredTransaction.length === 0) {
-      res.status(404).send("No transaction found");
+    if (!transaction) {
+      res.status(404).send("Transaction not found");
       return;
     }
-    res.status(200).send(filteredTransaction); // Send the transaction as a response
+    res.status(200).send(transaction); // Send the transaction as a response
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error getting transaction" });
+
   }
 });
