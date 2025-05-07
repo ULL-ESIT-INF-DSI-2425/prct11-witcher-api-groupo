@@ -11,5 +11,15 @@ export enum Materials {
   RUBY_DUST = "ruby dust",
   STEEL_LINE = "steel line",
   SIREN_VOCAL_CHORDS = "siren vocal chords",
-  ZERRIKANIAN_POWDER = "zerrikanian powder"
+  ZERRIKANIAN_POWDER = "zerrikanian powder",
+  GOLD_INGOT = "gold ingot",
+  SILVER_INGOT = "silver ingot",
+  IRON_INGOT = "iron ingot",
+  WOOD = "wood",
+  GLASS = "glass",
+  LEATHER = "leather",
+  SILVER = "silver",
+  GOLD = "gold",
+  GRASS = "grass",
+  STONE = "stone"
 }

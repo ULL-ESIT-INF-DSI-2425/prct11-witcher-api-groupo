@@ -118,6 +118,7 @@ goodsRouter.patch("/goods/:id", async (req, res) => {
     }
 
     const allowedUpdates = [
+      "id",
       "name",
       "description",
       "material",
