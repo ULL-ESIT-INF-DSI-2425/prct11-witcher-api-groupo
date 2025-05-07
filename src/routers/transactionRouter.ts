@@ -143,23 +143,98 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
 /**
  * Get all transactions from the database
  */
+// transactionRouter.get("/transactions", async (req, res) => {
+//   try {
+//     // va a buscar todas las transacciones
+//     // const transactions = await Transaction.find()
+//     //   .populate("client", "id name") // Populate specific client fields
+//     //   .populate("merchant", "id name") // Populate specific merchant fields
+//     //   .populate("goods.good"); // Populate specific good fields
+//     const transactionsPopulated = await Transaction.find().populate({
+//       path: "goods.good",
+//       model: Good,
+//       select: "id name description material weight value stock",
+//     }).populate({
+//       path: "client",
+//       model: Client,
+//       select: "id name",
+//     }).populate({
+//       path: "merchant",
+//       model: Merchant,
+//       select: "id name",
+//     });
+//     res.status(200).send(transactionsPopulated); // Send the transactions as a response
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ error: "Error getting transactions" });
+//   }
+// });
+
+/**
+ * Get transactions by merchant or client name
+ */
+
 transactionRouter.get("/transactions", async (req, res) => {
+  // Get the name from the query
+  const filter = req.query.name ? { name: req.query.name.toString() } : {}; // filter by name if provided from query
+  // find merchant or client by name
+  Merchant.find(filter)
+    .then(async (merchants) => {
+      if (merchants.length !== 0) {
+        const transactions = await Transaction.find({
+          merchant: merchants[0]._id,
+        })
+          .populate("client", "id name") // Populate specific client fields
+          .populate("merchant", "id name") // Populate specific merchant fields
+          .populate("goods.good"); // Populate specific good fields
+        res.status(200).send(transactions); // Send the transactions as a response
+      } else {
+        Client.find(filter)
+          .then(async (clients) => {
+            if (clients.length !== 0) {
+              const transactions = await Transaction.find({
+                client: clients[0]._id,
+              })
+                .populate("client", "id name") // Populate specific client fields
+                .populate("merchant", "id name") // Populate specific merchant fields
+                .populate("goods.good"); // Populate specific good fields
+              res.status(200).send(transactions); // Send the transactions as a response
+            } else {
+              res.status(404).send("No transactions found");
+            }
+          })
+          .catch(() => {
+            res.status(500).send();
+          });
+      }
+    })
+    .catch(() => {
+      res.status(500).send();
+    });
+});
+
+/**
+ * Get a transaction by id
+ */
+transactionRouter.get("/transactions/:id", async (req, res) => {
   try {
-    // va a buscar todas las transacciones
-    const transactions = await Transaction.find()
+    const id = req.params.id; // Get the id from the request params
+    const transaction = await Transaction.find({})
       .populate("client", "id name") // Populate specific client fields
       .populate("merchant", "id name") // Populate specific merchant fields
       .populate("goods.good"); // Populate specific good fields
-    res.status(200).send(transactions); // Send the transactions as a response
+  
+    const filteredTransaction = transaction.filter((transaction) => {
+      const clientMatch = transaction.client && (typeof transaction.client === "object" && transaction.client.id === id);
+      const merchantMatch = transaction.merchant && (typeof transaction.merchant === "object" && transaction.merchant.id === id);
+    });
+    if (filteredTransaction.length === 0) {
+      res.status(404).send("No transaction found");
+      return;
+    }
+    res.status(200).send(filteredTransaction); // Send the transaction as a response
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Error getting transactions" });
+    res.status(500).send({ error: "Error getting transaction" });
   }
 });
-
-
-
-
-
-
-
