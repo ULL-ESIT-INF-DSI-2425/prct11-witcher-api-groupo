@@ -22,7 +22,7 @@ goodsRouter.post("/goods", async (req, res) => {
       res.status(201).send(good);
     }
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -33,9 +33,13 @@ goodsRouter.get("/goods", async (req, res) => {
   try {
     const query = req.query;
     const goods = await Good.find(query);
+    if (goods.length === 0) {
+      res.status(404).send();
+      return;
+    }
     res.status(200).send(goods);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -51,7 +55,7 @@ goodsRouter.get("/goods/:id", async (req, res) => {
     }
     res.send(good);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -64,7 +68,7 @@ goodsRouter.patch("/goods", async (req, res) => {
     const goods = await Good.find(query);
 
     if (goods.length === 0) {
-      res.status(404).send({ error: "No goods found matching the query" });
+      res.status(404).send();
       return;
     }
 
@@ -83,7 +87,7 @@ goodsRouter.patch("/goods", async (req, res) => {
     );
 
     if (!isValidUpdate) {
-      res.status(400).send({
+      res.status(406).send({
         error: "Update is not permitted",
       });
       return;
@@ -98,7 +102,7 @@ goodsRouter.patch("/goods", async (req, res) => {
 
     res.send(updatedGoods);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -127,7 +131,7 @@ goodsRouter.patch("/goods/:id", async (req, res) => {
     );
 
     if (!isValidUpdate) {
-      res.status(400).send({
+      res.status(406).send({
         error: "Update is not permitted",
       });
       return;
@@ -137,7 +141,7 @@ goodsRouter.patch("/goods/:id", async (req, res) => {
     await good.save();
     res.send(good);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -150,7 +154,7 @@ goodsRouter.delete("/goods", async (req, res) => {
     const goods = await Good.find(query);
 
     if (goods.length === 0) {
-      res.status(404).send({ error: "No goods found matching the query" });
+      res.status(404).send();
       return;
     }
 
@@ -162,7 +166,7 @@ goodsRouter.delete("/goods", async (req, res) => {
 
     res.send(deletedGoods);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
 
@@ -173,12 +177,12 @@ goodsRouter.delete("/goods/:id", async (req, res) => {
   try {
     const good = await Good.findById(req.params.id);
     if (!good) {
-      res.status(404).send({ error: "No goods found matching the ID" });
+      res.status(404).send();
       return;
     }
     await good.deleteOne();
     res.send(good);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(400).send(error);
   }
 });
