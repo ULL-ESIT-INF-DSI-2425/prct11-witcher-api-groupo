@@ -240,6 +240,106 @@ transactionRouter.get("/transactions/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error getting transaction" });
-
   }
 });
+
+/**
+ * Get transactions by date
+ */
+
+transactionRouter.get("/transactions/date", async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query; // Get the start and end date from the request query
+    if (!startDate || !endDate) {
+      res.status(400).send("Please provide a start and end date");
+      return;
+    }
+    const start = new Date(startDate.toString());
+    const end = new Date(endDate.toString());
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      res.status(400).send("Invalid date format");
+      return;
+    }
+    const transactions = await Transaction.find({
+      date: {
+        $gte: start, // Greater than or equal to start date
+        $lte: endDate, // Less than or equal to end date
+      },
+    })
+      .populate("client", "id name") // Populate specific client fields
+      .populate("merchant", "id name") // Populate specific merchant fields
+      .populate("goods.good"); // Populate specific good fields
+    if (!transactions) {
+      res.status(404).send("No transactions found");
+      return;
+    }
+    if (transactions.length === 0) {
+      res.status(404).send("No transactions found in the given date range");
+      return;
+    }
+    res.status(200).send(transactions); // Send the transactions as a response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error getting transactions by date" });
+  }
+});
+
+// /**
+//  * Update a transaction by id
+//  */
+
+// transactionRouter.patch("/transactions", async (req, res) => {
+//   try {
+//     const name = req.query.name; // Get the name from the request query
+//     const update = req.body; // Get the update from the request body
+//     if (!name) {
+//       res.status(400).send("Please provide a name");
+//       return;
+//     } else if (!req.body || Object.keys(req.body).length === 0) {
+//       res.status(400).send("Please provide an body to update");
+//       return;
+//     }
+//     console.log("Name: ", name);
+//     console.log("Update: ", update);
+//     const client = await Client.findOne({name: name}); // Find the client by name
+//     const merchant = await Merchant.findOne({name: name}); // Find the merchant by name
+//     const allowedUpdates = ["client", "merchant", "goods", "date", "totalValue"]; // Allowed updates
+//     const actualUpdates = Object.keys(req.body); // Get the actual updates from the request body
+//     const isValidUpdate = actualUpdates.every((update) =>
+//       allowedUpdates.includes(update),
+//     ); // Check if the updates are valid
+//     if (!isValidUpdate) {
+//       res.status(400).send("Invalid updates");
+//       return;
+//     }
+//     let result; // Variable to store the result of the update
+//     if (client) {
+//       result = await Transaction.findOneAndUpdate(
+//         { client: client._id }, // Find the transaction by client id
+//         update, // Update the transaction
+//         {
+//           new: true, // Return the updated transaction
+//           runValidators: true, // Run validators
+//         },
+//       );
+//     } else if (merchant) {
+//       result = await Transaction.findOneAndUpdate(
+//         { merchant: merchant._id }, // Find the transaction by merchant id
+//         update, // Update the transaction
+//         {
+//           new: true, // Return the updated transaction
+//           runValidators: true, // Run validators
+//         },
+//       );
+//     }
+//     if (!result) {
+//       res.status(404).send("No transaction found");
+//       return;
+//     }
+//     res.status(200).send(result); // Send the updated transaction as a response
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ error: "Error updating transaction" });
+//   }
+// })
