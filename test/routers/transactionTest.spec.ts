@@ -9,7 +9,7 @@ import { Good } from "../../src/models/goodModel.js";
 
 const firstBuy = {
   id: 243,
-  merchantName: "MercaderPrueba",
+  merchantName: "Pepe",
   items: [
       {
           id: 2429,
@@ -80,9 +80,10 @@ beforeEach(async () => {
 describe("Transactions API", () => {
 
   it("Should successfully create a new transaction", async () => {
-    // await request(app)
-    // .get("/merchants?name=Pepe")
-    // .expect(200);
+    await request(app)
+      .post("/merchants")
+      .send(firstMerchant)
+      .expect(201);
     const response = await request(app)
       .post("/transactions/buy")
       .send(firstBuy)

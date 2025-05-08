@@ -18,8 +18,9 @@
 1. [Introducción](#1-introducción)
 2. [Estructura de Ficheros del Proyecto](#2-estructura-de-ficheros-del-proyecto)
 3. [Comandos para el funcionamiento de la practica](#3-comandos-para-el-funcionamiento-de-la-practica)
-4. [Conclusiones](#4-conclusiones)
-5. [Bibliografía](#5-bibliografía)
+4. [API REST](#4-api-rest-desplegada-en-render)
+5. [Conclusiones](#5-conclusiones)
+6. [Bibliografía](#6-bibliografía)
 
 # 1. Introducción
 
@@ -46,14 +47,8 @@ Contiene los ficheros de configuración de los diferentes entornos de trabajo.
 ## 📂 coverage
 Contiene los ficheros relativos al proyecto con Coveralls mediante coverage.
 
-## 📂 dist
-Contiene los ficheros compilados del proyecto.
-
 ## 📂 docs
 Contiene los ficheros relativos a la documentación del proyecto.
-
-## 📂 node_modules
-Contiene los ficheros relativos a la dependencias del compilador del proyecto.
 
 ## 📂 src
 Contiene el código fuente principal del proyecto.
@@ -152,12 +147,26 @@ Definición de ficheros necesarios para el funcionamiento del proyecto
   npm run coverage
   ```
 
+* Para la probar el funcionamiento en local:
+  ```
+  npm run dev
+  ```
 
-# 4. Conclusiones
+# 4. API REST desplegada en Render
+
+Esta API REST ha sido desplegada en Render y conectada a un clúster en la nube de MongoDB Atlas. Para poder hacer 
+peticiones directamente desde un navegador, se puede hacer uso de un gestor de peticiones como [**Postman**](https://www.postman.com/), que cuenta con una extensión en **_Visual Studio Code_**. 
+
+Para ello, en la extensión de **Postman** use el siguiente enlace:
+
+[https://white-wolf-inn-teamo.onrender.com/](https://white-wolf-inn-teamo.onrender.com/)
+
+
+# 5. Conclusiones
 
 Gracias a los retos que nos ha supuesto este proyecto, hemos trabajado en como funcionan las API REST 
 
-# 5. Bibliografía
+# 6. Bibliografía
 
 1. **Enunciado de la práctica:** [https://ull-esit-inf-dsi-2425.github.io/prct12-witcher-api/](https://ull-esit-inf-dsi-2425.github.io/prct12-witcher-api/) 
 
