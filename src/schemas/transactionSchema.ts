@@ -17,7 +17,7 @@ export const TransactionSchema = new Schema<TransactionDocument>({
   id: {
     type: Number,
     required: false,
-    unique: true,
+    unique: false,
     trim: true,
     validate: (value: number) => {
       if (value < 0 || !Number.isInteger(value)) {

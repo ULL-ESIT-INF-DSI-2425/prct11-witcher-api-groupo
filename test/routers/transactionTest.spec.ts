@@ -6,9 +6,16 @@ import { Merchant } from "../../src/models/merchantModel.js";
 import { Client } from "../../src/models/clientModel.js";
 import { Good } from "../../src/models/goodModel.js";
 
+const firstMerchant = {
+  id: 1,
+  name: "Pepe",
+  location: "Novigrad",
+  merchantType: "blacksmit"
+}
 
 const firstBuy = {
-  id: 243,
+  id: 213,
+  type: "buy",
   merchantName: "Pepe",
   items: [
       {
@@ -34,13 +41,6 @@ const firstBuy = {
   ]
 }
 
-const firstMerchant = {
-  id: 1,
-  name: "Pepe",
-  location: "Novigrad",
-  merchantType: "blacksmit"
-}
-  
 
 // const firstSale = {
 //   id: 2312343,
@@ -73,17 +73,16 @@ const firstMerchant = {
 beforeEach(async () => {
   await Transaction.deleteMany();
   await Merchant.deleteMany();
-  //await new Transaction(firstSale).save();
-  //await new Merchant(firstMerchant).save();
+  await new Merchant(firstMerchant).save();
+  //await new Transaction(firstBuy).save();
 });
 
 describe("Transactions API", () => {
 
   it("Should successfully create a new transaction", async () => {
     await request(app)
-      .post("/merchants")
-      .send(firstMerchant)
-      .expect(201);
+    .get("/merchants?name=Pepe")
+    .expect(200);
     const response = await request(app)
       .post("/transactions/buy")
       .send(firstBuy)
