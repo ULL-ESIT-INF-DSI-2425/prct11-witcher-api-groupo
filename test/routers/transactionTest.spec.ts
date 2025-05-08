@@ -250,7 +250,7 @@ describe("Transactions API", () => {
       .patch(`/transactions/${transaction._id}`)
       .expect(400);
   });
-  // dale
+
   it("Should return an error when the transaction is not found", async () => {
     const responde = await request(app)
       .patch(`/transactions/1234567890`)
@@ -276,7 +276,3 @@ describe("Transactions API", () => {
       .expect(400);
   });
 });
-
-/**
- * dale
- */
