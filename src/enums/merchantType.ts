@@ -1,4 +1,3 @@
-
 /**
  * Enum of merchant types.
  */

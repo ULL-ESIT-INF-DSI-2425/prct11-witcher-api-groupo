@@ -7,4 +7,7 @@ import { TransactionSchema } from "../schemas/transactionSchema.js";
  * @constant
  * @type {model<TransactionDocument>}
  */
-export const Transaction = model<TransactionDocument>("Transaction", TransactionSchema);
+export const Transaction = model<TransactionDocument>(
+  "Transaction",
+  TransactionSchema,
+);

@@ -8,5 +8,5 @@ export enum Locations {
   TOUSSANT = "toussant",
   SKELLIGE = "skellige",
   NILFGAARD = "nilfgaard",
-  REDANIA = "redania"
+  REDANIA = "redania",
 }

@@ -1,4 +1,3 @@
-
 /**
  * Enum of transaction types.
  */

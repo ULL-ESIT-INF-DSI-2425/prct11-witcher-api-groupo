@@ -1,4 +1,4 @@
-import {connect} from 'mongoose';
+import { connect } from "mongoose";
 
 try {
   await connect(process.env.MONGODB_URL!);

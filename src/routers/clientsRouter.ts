@@ -59,7 +59,7 @@ clientRouter.patch("/hunters", async (req, res) => {
     res.status(400).send({
       error: "A name must be provided",
     });
-  } else if(!req.body || Object.keys(req.body).length === 0){
+  } else if (!req.body || Object.keys(req.body).length === 0) {
     res.status(400).send({
       error: "A body must be provided",
     });
@@ -75,22 +75,24 @@ clientRouter.patch("/hunters", async (req, res) => {
         error: "Update is not permitted",
       });
     } else {
-        await Client.findOneAndUpdate(
-          {
-            name: req.query.name.toString(),
-          },
-          req.body,
-          {
-            new: true,
-            runValidators: true,
-          },
-        ).then((client) => {
+      await Client.findOneAndUpdate(
+        {
+          name: req.query.name.toString(),
+        },
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        },
+      )
+        .then((client) => {
           if (!client) {
             res.status(404).send("No client found");
           } else {
             res.status(201).send(client);
           }
-        }).catch(() => {
+        })
+        .catch(() => {
           res.status(500).send();
         });
     }
@@ -118,13 +120,15 @@ clientRouter.patch("/hunters/:id", async (req, res) => {
       Client.findByIdAndUpdate(Object(req.params.id), req.body, {
         new: true,
         runValidators: true,
-      }).then((client) => {
+      })
+        .then((client) => {
           if (!client) {
             res.status(404).send("No client found");
           } else {
             res.status(201).send(client);
           }
-        }).catch(() => {
+        })
+        .catch(() => {
           res.status(500).send();
         });
     }

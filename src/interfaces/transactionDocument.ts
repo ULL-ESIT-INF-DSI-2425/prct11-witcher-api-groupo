@@ -24,8 +24,7 @@ export interface TransactionDocument extends Document {
   goods: {
     good: Schema.Types.ObjectId | GoodDocument;
     quantity: number;
-  } [];
+  }[];
   date: Date;
   totalValue: number;
-
 }

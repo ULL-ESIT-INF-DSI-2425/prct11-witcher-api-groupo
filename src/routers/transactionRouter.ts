@@ -15,7 +15,7 @@ export const transactionRouter = express.Router();
 
 transactionRouter.post("/transactions/buy", async (req, res) => {
   try {
-    const { id: transactionId, merchantName, items} = req.body;
+    const { id: transactionId, merchantName, items } = req.body;
     // destructure the request body
     const merchant = await Merchant.findOne({ name: merchantName }); // Find the merchant by name
     if (!merchant) {
@@ -28,7 +28,8 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
     }
     const goodsInTransaction = []; // Array to store the goods in the transaction
     let totalValue = 0; // Initialize total value to 0
-    for (const item of items) { // Iterate over each item in the items array
+    for (const item of items) {
+      // Iterate over each item in the items array
       const { name: goodName, quantity } = item; // Destructure the item to get the name and quantity
       let good = await Good.findOne({ name: goodName }); // Find the good by name
       if (!good) {
@@ -97,14 +98,17 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
     }
     const goodsInTransaction = []; // Array to store the goods in the transaction
     let totalValue = 0; // Initialize total value to 0
-    for (const item of items) { // Iterate over each item in the array of items implicated
-      const { name: goodName, quantity } = item;  // destructure the item to check if exist in DB
+    for (const item of items) {
+      // Iterate over each item in the array of items implicated
+      const { name: goodName, quantity } = item; // destructure the item to check if exist in DB
       let good = await Good.findOne({ name: goodName }); // Find the good by name
-      if (!good) { // in case the good does not exist
+      if (!good) {
+        // in case the good does not exist
         res.status(404).send({ error: "Good not found" });
         return;
       }
-      if (good.stock < quantity || good.stock === 0) { // Check if the stock is enough
+      if (good.stock < quantity || good.stock === 0) {
+        // Check if the stock is enough
         res.status(400).send({ error: "Not enough stock" });
         return;
       }
@@ -128,13 +132,11 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
       .populate("client", "id name") // Populate specific client fields
       .populate("goods.good"); // Populate specific good fields
     res.status(201).send(populatedTransaction); // Send the transaction as a response
-
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error adding sell transaction" });
   }
 });
-
 
 /**
  * Get transactions by merchant or client name
@@ -190,10 +192,11 @@ transactionRouter.get("/transactions/:id", async (req, res) => {
       return;
     }
     const transaction = await Transaction.find({
-      $or: [ // $or operator to find by client or merchant id in mongoDB
+      $or: [
+        // $or operator to find by client or merchant id in mongoDB
         { client: id }, // Find by client id
         { merchant: id }, // Find by merchant id
-      ]
+      ],
     })
       .populate("client", "id name") // Populate specific client fields
       .populate("merchant", "id name") // Populate specific merchant fields
@@ -226,7 +229,7 @@ transactionRouter.get("/transactions/date/simple", async (req, res) => {
       date: {
         $gte: start, // Greater than or equal to start date
         $lte: end, // Less than or equal to end date
-      }
+      },
     })
       .populate("client", "id name") // Populate specific client fields
       .populate("merchant", "id name") // Populate specific merchant fields
@@ -256,7 +259,8 @@ transactionRouter.delete("/transactions/:id", async (req, res) => {
       return;
     }
     const goods = transaction.goods; // Get the goods from the transaction
-    for (const item of goods) { // Iterate over each item in the goods array
+    for (const item of goods) {
+      // Iterate over each item in the goods array
       const good = await Good.findById(item.good); // Find the good by id
       if (good) {
         good.stock = good.stock + item.quantity; // Update the stock of the good
@@ -280,7 +284,13 @@ transactionRouter.patch("/transactions/:id", async (req, res) => {
     res.status(400).send("Please provide a body");
     return;
   } else {
-    const allowedUpdates = ["client", "merchant", "goods", "date", "totalValue"];
+    const allowedUpdates = [
+      "client",
+      "merchant",
+      "goods",
+      "date",
+      "totalValue",
+    ];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) =>
       allowedUpdates.includes(update),
@@ -289,22 +299,20 @@ transactionRouter.patch("/transactions/:id", async (req, res) => {
       res.status(400).send("Invalid updates");
       return;
     } else {
-      Transaction.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {
-          new: true,
-          runValidators: true,
-          // Checks if the modified fields are valid
-        },
-      )
+      Transaction.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+        // Checks if the modified fields are valid
+      })
         .then(async (transaction) => {
           if (!transaction) {
             // in case of no transaction to modify found
             res.status(404).send("No transaction found");
           } else {
             // populate the goods and the merchant
-            const populatedTransaction = await Transaction.findById(transaction._id)
+            const populatedTransaction = await Transaction.findById(
+              transaction._id,
+            )
               .populate("client", "id name") // Populate specific client fields
               .populate("merchant", "id name") // Populate specific merchant fields
               .populate("goods.good"); // Populate specific good fields
@@ -317,4 +325,4 @@ transactionRouter.patch("/transactions/:id", async (req, res) => {
         });
     }
   }
-})
+});

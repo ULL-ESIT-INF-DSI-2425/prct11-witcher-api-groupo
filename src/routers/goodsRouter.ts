@@ -9,7 +9,7 @@ export const goodsRouter = express.Router();
 goodsRouter.post("/goods", async (req, res) => {
   try {
     const { name, stock } = req.body;
-    
+
     const existingGood = await Good.findOne({ name });
 
     if (existingGood) {
@@ -79,7 +79,7 @@ goodsRouter.patch("/goods", async (req, res) => {
       "material",
       "weight",
       "value",
-      "stock"
+      "stock",
     ];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) =>
@@ -124,7 +124,7 @@ goodsRouter.patch("/goods/:id", async (req, res) => {
       "material",
       "weight",
       "value",
-      "stock"
+      "stock",
     ];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) =>

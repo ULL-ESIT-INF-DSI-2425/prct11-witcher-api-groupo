@@ -274,7 +274,7 @@ describe("Good API", () => {
       })
       .expect(404);
   });
-    
+
   it("Should not find an existing good to modify with empty name", async () => {
     await request(app)
       .patch("/goods?name=Golden sword")
@@ -286,25 +286,25 @@ describe("Good API", () => {
         weight: 12.54,
         value: 100,
         stock: 10,
-        _id: "123456789012345678901234"
+        _id: "123456789012345678901234",
       })
       .expect(406);
   });
 
   it("Should manage a PATCH Bad Request (400)", async () => {
     await request(app)
-    .patch("/goods/name")
-    .send({
-      id: 31,
-      name: "Can not modify this good _id",
-      description: "This is a good",
-      material: "makaham steel",
-      weight: 12.54,
-      value: 100,
-      stock: 10,
-      _id: "123456789012345678901234"
-    })
-    .expect(400);
+      .patch("/goods/name")
+      .send({
+        id: 31,
+        name: "Can not modify this good _id",
+        description: "This is a good",
+        material: "makaham steel",
+        weight: 12.54,
+        value: 100,
+        stock: 10,
+        _id: "123456789012345678901234",
+      })
+      .expect(400);
   });
 
   it("Should successfully modify an existing good", async () => {
@@ -401,21 +401,24 @@ describe("Good API", () => {
         weight: 12.54,
         value: 100,
         stock: 10,
-        _id: "123456789012345678901234"
+        _id: "123456789012345678901234",
       })
       .expect(404);
   });
 
   it("Should not modify and invalid attribute of a good with an ID", async () => {
-    const example = await request(app).post("/goods").send({
-      id: 77,
-      name: "A horrendous good",
-      description: "This is a horrendous good",
-      material: "makaham steel",
-      weight: 12.54,
-      value: 100,
-      stock: 10,
-    }).expect(201);
+    const example = await request(app)
+      .post("/goods")
+      .send({
+        id: 77,
+        name: "A horrendous good",
+        description: "This is a horrendous good",
+        material: "makaham steel",
+        weight: 12.54,
+        value: 100,
+        stock: 10,
+      })
+      .expect(201);
 
     await request(app)
       .patch(`/goods/${example.body._id}`)
@@ -423,12 +426,10 @@ describe("Good API", () => {
         name: "Changed good by id",
         description: "This is a changed good by id",
         material: "gold",
-        _id: "1456789012345678901234"
+        _id: "1456789012345678901234",
       })
       .expect(406);
   });
-
-
 
   it("Should successfully delete an existing good", async () => {
     await request(app).delete("/goods?name=Silver ring").expect(200);
@@ -446,14 +447,12 @@ describe("Good API", () => {
     await request(app).delete("/goods/name").expect(400);
   });
 
-  it('Should unsuccessfully delete an existing good', async () => {
-    await request(app)
-      .delete('/goods?name=Garalt')
-      .expect(404);
+  it("Should unsuccessfully delete an existing good", async () => {
+    await request(app).delete("/goods?name=Garalt").expect(404);
 
     await request(app)
       .delete(
-        '/goods?id=12&name=Wooden plank&description=This is a wooden plank that is very useful&material=wood&weight=0.5&value=5&stock=100',
+        "/goods?id=12&name=Wooden plank&description=This is a wooden plank that is very useful&material=wood&weight=0.5&value=5&stock=100",
       )
       .expect(404);
   });
@@ -469,38 +468,20 @@ describe("Good API", () => {
       stock: 10,
     });
 
-    await request(app)
-      .delete(`/goods/${example.body._id}`)
-      .expect(200);
-    await request(app)
-      .get(`/goods/${example.body._id}`)
-      .expect(404);
+    await request(app).delete(`/goods/${example.body._id}`).expect(200);
+    await request(app).get(`/goods/${example.body._id}`).expect(404);
   });
 
   it("Should unsuccessfully delete an existing good by id", async () => {
-    await request(app)
-      .delete("/goods/123456789012345678901234")
-      .expect(404);
+    await request(app).delete("/goods/123456789012345678901234").expect(404);
   });
 
-  it('Not implemented', async () => {
-    await request(app)
-      .delete('/god')
-      .expect(501);
-    await request(app)
-      .patch('/goos')
-      .expect(501);
-    await request(app)
-      .get('/god')
-      .expect(501);
-    await request(app)
-      .post('/god')
-      .expect(501);
-    await request(app)
-      .post('/god')
-      .expect(501);
-      await request(app)
-      .put('/goods')
-      .expect(501);
+  it("Not implemented", async () => {
+    await request(app).delete("/god").expect(501);
+    await request(app).patch("/goos").expect(501);
+    await request(app).get("/god").expect(501);
+    await request(app).post("/god").expect(501);
+    await request(app).post("/god").expect(501);
+    await request(app).put("/goods").expect(501);
   });
 });

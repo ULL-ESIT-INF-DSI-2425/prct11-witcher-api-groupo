@@ -1,10 +1,10 @@
-/** 
+/**
  * Enum with some materials to craft objects in The Witcher
  */
 export enum Materials {
-  MAKAHAM_STEEL = "makaham steel", 
-  HARDENED_LEATHER = "hardened leather", 
-  MAGIC_ESSENCE = "magic essence", 
+  MAKAHAM_STEEL = "makaham steel",
+  HARDENED_LEATHER = "hardened leather",
+  MAGIC_ESSENCE = "magic essence",
   MONSTER_ESSENCE = "monster essence",
   METEORITE_LINGOT = "meteorite lingot",
   RESIN = "resin",
@@ -21,5 +21,5 @@ export enum Materials {
   SILVER = "silver",
   GOLD = "gold",
   GRASS = "grass",
-  STONE = "stone"
+  STONE = "stone",
 }

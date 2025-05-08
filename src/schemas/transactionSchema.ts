@@ -26,32 +26,31 @@ export const TransactionSchema = new Schema<TransactionDocument>({
   },
   client: {
     type: Schema.Types.ObjectId,
-    ref: "Client", 
+    ref: "Client",
     required: false,
     default: null,
     validate: {
       validator: async (ClientId: Types.ObjectId | undefined | null) => {
-        if (ClientId) { 
+        if (ClientId) {
           const client = await Client.findById(ClientId);
-          return !!client; 
-        } 
-        return true; 
+          return !!client;
+        }
+        return true;
       },
-      
     },
   },
   merchant: {
     type: Schema.Types.ObjectId,
-    ref: "Merchant", 
+    ref: "Merchant",
     required: false,
     default: null,
     validate: {
       validator: async (merchantId: Types.ObjectId | undefined | null) => {
-        if (merchantId) { 
+        if (merchantId) {
           const merchant = await Merchant.findById(merchantId);
-          return !!merchant; 
-        } 
-        return true; 
+          return !!merchant;
+        }
+        return true;
       },
     },
   },
@@ -64,7 +63,7 @@ export const TransactionSchema = new Schema<TransactionDocument>({
         validate: {
           validator: async (GoodId: Types.ObjectId) => {
             const good = await Good.findById(GoodId);
-            return !!good; 
+            return !!good;
           },
         },
       },
