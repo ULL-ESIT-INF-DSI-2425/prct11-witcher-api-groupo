@@ -331,3 +331,29 @@ transactionRouter.get("/transactions/date/simple", async (req, res) => {
 //     res.status(500).send({ error: "Error updating transaction" });
 //   }
 // })
+
+/**
+ * Delete a transaction by id
+ */
+
+transactionRouter.delete("/transactions/:id", async (req, res) => {
+  try {
+    const id = req.params.id; // Get the id from the request params
+    if (!id) {
+      res.status(400).send("Please provide an id");
+      return;
+    }
+    const transaction = await Transaction.findByIdAndDelete(id)
+      .populate("client", "id name") // Populate specific client fields
+      .populate("merchant", "id name") // Populate specific merchant fields
+      .populate("goods.good"); // Populate specific good fields
+    if (!transaction) {
+      res.status(404).send("Transaction not found");
+      return;
+    }
+    res.status(200).send(transaction); // Send the deleted transaction as a response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error deleting transaction" });
+  }
+});
