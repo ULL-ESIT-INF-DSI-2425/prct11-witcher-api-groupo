@@ -200,6 +200,13 @@ describe("Transactions API", () => {
       .get(`/transactions?name=Pepe`)
       .expect(200);
   })
+
+  it("SHould return error when no transaction is found", async () => {
+    const transaction = await new Transaction(firstBuy).save();
+    const response = await request(app)
+      .get(`/transactions?name=Segredo`) 
+      .expect(404); 
+  });
   it("Should get the transaction by id of the merchant", async () => {
     const transaction = await new Transaction(firstBuy).save();
     const idOfMerchant = transaction.merchantId;
@@ -214,12 +221,22 @@ describe("Transactions API", () => {
       .get(`/transactions?clientId=${idOfClient}`)
       .expect(200);
   })
+
+  it ("Should return an error when no transaction is found", async () => {
+    const transaction = await new Transaction(firstSell).save();
+    const response = await request(app)
+      .get(`/transactions/1283792rwer3`)
+      .expect(500);
+  });
+
+
   it ("Should get the transaction by date", async () => {
     const transaction = await new Transaction(firstSell).save();
     const response = await request(app)
       .get(`/transactions?startDate=2025-05-08T00:00:00.000Z&endDate=2025-05-08T23:59:59.999Z`)
       .expect(200);
   })
+
 
   it ("Should modify a transaction", async () => {
     await new Merchant(secondMerchant).save();
@@ -234,4 +251,40 @@ describe("Transactions API", () => {
       })
       .expect(200);
   })
+  it ("Should return an error wehn a body is not given", async () => {
+    const transaction = await new Transaction(firstBuy).save();
+    const responde = await request(app)
+      .patch(`/transactions/${transaction._id}`)
+      .expect(400);
+  })
+  // dale
+  it ("Should return an error when the transaction is not found", async () => {
+    const responde = await request(app)
+      .patch(`/transactions/1234567890`)
+      .expect(400); 
+  })
+ 
+  it ("Should return an error when is invalid update", async () => {
+    const transaction = await new Transaction(firstBuy).save();
+    const responde = await request(app)
+      .patch(`/transactions/${transaction._id}`)
+      .send({
+        merchant: "1234567890",
+      })
+      .expect(500);
+  })
+  it ("Should return an error when try to modify something not allowed", async () => {
+    const transaction = await new Transaction(firstBuy).save();
+    const responde = await request(app)
+      .patch(`/transactions/${transaction._id}`)
+      .send({
+        quantity: 100,
+      })
+      .expect(400);
+  })
+  
 });
+
+/**
+ * dale
+ */

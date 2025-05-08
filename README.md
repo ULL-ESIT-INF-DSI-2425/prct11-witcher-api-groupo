@@ -164,7 +164,7 @@ Para ello, en la extensión de **Postman** use el siguiente enlace:
 
 # 5. Conclusiones
 
-Gracias a los retos que nos ha supuesto este proyecto, hemos trabajado en como funcionan las API REST, la programación dirigida a eventos, 
+Gracias a los retos que nos ha supuesto este proyecto, hemos trabajado en como funcionan las API REST, la programación dirigida a eventos.
 
 # 6. Bibliografía
 
