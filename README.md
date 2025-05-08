@@ -164,7 +164,7 @@ Para ello, en la extensión de **Postman** use el siguiente enlace:
 
 # 5. Conclusiones
 
-Gracias a los retos que nos ha supuesto este proyecto, hemos trabajado en como funcionan las API REST 
+Gracias a los retos que nos ha supuesto este proyecto, hemos trabajado en como funcionan las API REST, la programación dirigida a eventos, 
 
 # 6. Bibliografía
 
@@ -175,3 +175,5 @@ Gracias a los retos que nos ha supuesto este proyecto, hemos trabajado en como f
 3. **Coveralls:** [https://coveralls.io/github/ULL-ESIT-INF-DSI-2425/prct11-witcher-api-groupo](https://coveralls.io/github/ULL-ESIT-INF-DSI-2425/prct11-witcher-api-groupo)
 
 4. **SonarQube Cloud:** [https://sonarcloud.io/project/overview?id=ULL-ESIT-INF-DSI-2425_prct11-witcher-api-groupo](https://sonarcloud.io/project/overview?id=ULL-ESIT-INF-DSI-2425_prct11-witcher-api-groupo)
+
+5. **API Desplegada:** [https://white-wolf-inn-teamo.onrender.com/](https://white-wolf-inn-teamo.onrender.com/)
