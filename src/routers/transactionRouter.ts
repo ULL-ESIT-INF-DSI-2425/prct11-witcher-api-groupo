@@ -247,36 +247,24 @@ transactionRouter.get("/transactions/:id", async (req, res) => {
  * Get transactions by date
  */
 
-transactionRouter.get("/transactions/date", async (req, res) => {
+transactionRouter.get("/transactions/date/simple", async (req, res) => {
   try {
     const { startDate, endDate } = req.query; // Get the start and end date from the request query
     if (!startDate || !endDate) {
-      res.status(400).send("Please provide a start and end date");
+      res.status(400).send("Please provide start and end date");
       return;
     }
     const start = new Date(startDate.toString());
     const end = new Date(endDate.toString());
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      res.status(400).send("Invalid date format");
-      return;
-    }
     const transactions = await Transaction.find({
       date: {
         $gte: start, // Greater than or equal to start date
-        $lte: endDate, // Less than or equal to end date
-      },
+        $lte: end, // Less than or equal to end date
+      }
     })
       .populate("client", "id name") // Populate specific client fields
       .populate("merchant", "id name") // Populate specific merchant fields
       .populate("goods.good"); // Populate specific good fields
-    if (!transactions) {
-      res.status(404).send("No transactions found");
-      return;
-    }
-    if (transactions.length === 0) {
-      res.status(404).send("No transactions found in the given date range");
-      return;
-    }
     res.status(200).send(transactions); // Send the transactions as a response
   } catch (error) {
     console.error(error);
