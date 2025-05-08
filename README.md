@@ -129,6 +129,43 @@ Pruebas relativas a los routers.
 - `merchantTests.spec.ts` - Pruebas para la base de datos de mercaderes.
 - `transaction.spec.ts` - Pruebas para la base de datos de transacciones.
 
+### 💡 Información extra acerca de la ejecución de una transacción
+Para realizar una transacción, esta debe de seguir un ejemplo como el siente
+```json
+{
+    "id": 243,
+    "merchantName": "Pepe",
+    "items": [
+        {
+            "id": 2429,
+            "name": "Swallow Potion",
+            "quantity": 2,
+            "value": 25,
+            "material": "magic essence",
+            "weight": 7,
+            "stock": 5,
+            "description": "yea2"
+        },
+        {
+            "id": 900,
+            "name": "Griffin Witcher Gear - Steel Sword",
+            "quantity": 1,
+            "value": 500,
+            "material": "makaham steel",
+            "weight": 5,
+            "stock": 3, // Stock inicial del bien que el mercader vende
+            "description": "yea"
+        }
+    ]
+}
+```
+> Cabe destacar que debe de existir el mercader o el cliente (rellenar el campo de cliente o de merchant con su respectivo nombre) y el good debe de existir en caso de que se quiera realizar una venta
+
+Además, a la hora de realizar dichas operaciones para realizar una escritura de transacción, hay dos rutas
+- `transaction/buy` Esto es para realizar una compra desde el mercader
+- `transaction/sell` Esto es para realizar una venta a un cliente
+> Recalcar que a la hora de realizar una búsqueda por fechas, la ruta es `transaction/date/simple`
+
 ## Otros Ficheros
 
 Definición de ficheros necesarios para el funcionamiento del proyecto
