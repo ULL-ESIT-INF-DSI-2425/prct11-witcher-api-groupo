@@ -5,6 +5,11 @@ export const clientRouter = express.Router();
 
 /**
  * Post a new client to the database
+ * 
+ * @route POST /hunters
+ * @param req - Objeto de solicitud que contiene los datos del cliente en `req.body`.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con el cliente creado o un error.
  */
 clientRouter.post("/hunters", async (req, res) => {
   const client = new Client(req.body);
@@ -18,6 +23,11 @@ clientRouter.post("/hunters", async (req, res) => {
 
 /**
  * Finds a client from the database matching the query
+ * 
+ * @route GET /hunters
+ * @param req - Objeto de solicitud que contiene los parámetros de consulta.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con los clientes encontrados o un error.
  */
 clientRouter.get("/hunters", async (req, res) => {
   const filter = req.query.name ? { name: req.query.name.toString() } : {};
@@ -37,6 +47,11 @@ clientRouter.get("/hunters", async (req, res) => {
 
 /**
  * Finds a client from the database with the given id of mongoDB
+ * 
+ * @route GET /hunters/:id
+ * @param req - Objeto de solicitud que contiene el ID del cliente en los parámetros de la ruta.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con el cliente encontrado o un error.
  */
 clientRouter.get("/hunters/:id", async (req, res) => {
   try {
@@ -53,6 +68,11 @@ clientRouter.get("/hunters/:id", async (req, res) => {
 
 /**
  * Updates a client from the database with the information of the query
+ * 
+ * @route PATCH /hunters
+ * @param req - Objeto de solicitud que contiene el nombre del cliente en los parámetros de consulta y los datos a actualizar en el cuerpo.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con el cliente actualizado o un error.
  */
 clientRouter.patch("/hunters", async (req, res) => {
   if (!req.query.name) {
@@ -101,6 +121,11 @@ clientRouter.patch("/hunters", async (req, res) => {
 
 /**
  * Updates a client from the database with the information of the query
+ * 
+ * @route PATCH /hunters/:id
+ * @param req - Objeto de solicitud que contiene el ID del cliente en los parámetros de la ruta y los datos a actualizar en el cuerpo.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con el cliente actualizado o un error.
  */
 clientRouter.patch("/hunters/:id", async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
@@ -137,6 +162,11 @@ clientRouter.patch("/hunters/:id", async (req, res) => {
 
 /**
  * Deletes a client from the database with the given id of mongoDB
+ * 
+ * @route DELETE /hunters
+ * @param req - Objeto de solicitud que contiene el nombre del cliente en los parámetros de consulta.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con el cliente eliminado o un error.
  */
 clientRouter.delete("/hunters", async (req, res) => {
   if (!req.query.name) {
@@ -163,6 +193,11 @@ clientRouter.delete("/hunters", async (req, res) => {
 
 /**
  * Deletes a client from the database with the given id of mongoDB
+ * 
+ * @route DELETE /hunters/:id
+ * @param req - Objeto de solicitud que contiene el ID del cliente en los parámetros de la ruta.
+ * @param res - Objeto de respuesta utilizado para enviar el resultado al cliente.
+ * @returns {void} Devuelve una respuesta HTTP con el cliente eliminado o un error.
  */
 clientRouter.delete("/hunters/:id", async (req, res) => {
   try {
