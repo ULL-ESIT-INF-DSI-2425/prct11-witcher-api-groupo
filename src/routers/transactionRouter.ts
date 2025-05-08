@@ -392,12 +392,18 @@ transactionRouter.patch("/transactions/:id", async (req, res) => {
           // Checks if the modified fields are valid
         },
       )
-        .then((transaction) => {
+        .then(async (transaction) => {
           if (!transaction) {
             // in case of no transaction to modify found
             res.status(404).send("No transaction found");
           } else {
-            res.send(transaction);
+            // populate the goods and the merchant
+            const populatedTransaction = await Transaction.findById(transaction._id)
+              .populate("client", "id name") // Populate specific client fields
+              .populate("merchant", "id name") // Populate specific merchant fields
+              .populate("goods.good"); // Populate specific good fields
+            // send the populated transaction
+            res.status(200).send(populatedTransaction); // Send the transaction as a response
           }
         })
         .catch(() => {
