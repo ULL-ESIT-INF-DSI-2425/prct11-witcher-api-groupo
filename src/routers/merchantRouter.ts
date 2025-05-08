@@ -55,11 +55,9 @@ merchantsRouter.get("/merchants/:id", async (req, res) => {
  */
 merchantsRouter.patch("/merchants", async (req, res) => {
   if (!req.query.name) {
-    // in case of no name provided
     res.status(400).send("Please provide an id");
     return;
   } else if (!req.body || Object.keys(req.body).length === 0) {
-    // in case of no body provided
     res.status(400).send("Please provide an body to update");
     return;
   } else {
@@ -78,12 +76,10 @@ merchantsRouter.patch("/merchants", async (req, res) => {
         {
           new: true,
           runValidators: true,
-          // Checks if the modified fields are valid
         },
       )
         .then((merchant) => {
           if (!merchant) {
-            // in case of no merchant to modify found
             res.status(404).send("No merchant found");
           } else {
             res.send(merchant);
@@ -101,7 +97,6 @@ merchantsRouter.patch("/merchants", async (req, res) => {
  */
 merchantsRouter.patch("/merchants/:id", async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    // in case of no body provided
     res.status(400).send("Please provide an body to update");
     return;
   } else {
@@ -117,11 +112,9 @@ merchantsRouter.patch("/merchants/:id", async (req, res) => {
       Merchant.findByIdAndUpdate(Object(req.params.id), req.body, {
         new: true,
         runValidators: true,
-        // Checks if the modified fields are valid
       })
         .then((merchant) => {
           if (!merchant) {
-            // in case of no merchant to modify found
             res.status(404).send("No merchant found");
           } else {
             res.send(merchant);
@@ -139,14 +132,12 @@ merchantsRouter.patch("/merchants/:id", async (req, res) => {
  */
 merchantsRouter.delete("/merchants", async (req, res) => {
   if (!req.query.name) {
-    // in case of no name provided
     res.status(400).send("Please provide a name");
     return;
   } else {
     Merchant.findOneAndDelete({ name: req.query.name?.toString() })
       .then((merchant) => {
         if (!merchant) {
-          // in case of no merchant to delete found
           res.status(404).send("No merchant found");
         } else {
           res.send(merchant);

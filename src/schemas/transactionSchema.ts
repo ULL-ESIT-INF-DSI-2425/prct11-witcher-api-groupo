@@ -1,16 +1,8 @@
 import { TransactionDocument } from "../interfaces/transactionDocument.js";
-// import validator from "validator";
 import { Schema, Types } from "mongoose";
 import { TransactionType } from "../enums/transactionType.js";
-// import { GoodSchema } from "./goodSchema.js";
-// import { ClientSchema } from "./clientSchema.js";
-// import { MerchantSchema } from "./merchantSchema.js";
-// import { ClientDocument } from "../interfaces/clientDocument.js";
-// import { MerchantDocument } from "../interfaces/merchantDocument.js";
-// import { GoodDocument } from "../interfaces/goodDocument.js";
 import { Merchant } from "../models/merchantModel.js";
 import { Client } from "../models/clientModel.js";
-// import { goodsRouter } from "../routers/goodsRouter.js";
 import { Good } from "../models/goodModel.js";
 
 export const TransactionSchema = new Schema<TransactionDocument>({
@@ -34,32 +26,32 @@ export const TransactionSchema = new Schema<TransactionDocument>({
   },
   client: {
     type: Schema.Types.ObjectId,
-    ref: "Client", // Reference to the Client schema
+    ref: "Client", 
     required: false,
     default: null,
     validate: {
       validator: async (ClientId: Types.ObjectId | undefined | null) => {
-        if (ClientId) { // Check if ClientId is provided
+        if (ClientId) { 
           const client = await Client.findById(ClientId);
-          return !!client; // Return true if the client exists
+          return !!client; 
         } 
-        return true; // Return true if the client exists
+        return true; 
       },
-      // lanzar error si no existe el cliente
+      
     },
   },
   merchant: {
     type: Schema.Types.ObjectId,
-    ref: "Merchant", // Reference to the Merchant schema
+    ref: "Merchant", 
     required: false,
     default: null,
     validate: {
       validator: async (merchantId: Types.ObjectId | undefined | null) => {
-        if (merchantId) { // Check if merchantId is provided
+        if (merchantId) { 
           const merchant = await Merchant.findById(merchantId);
-          return !!merchant; // Return true if the merchant exists
+          return !!merchant; 
         } 
-        return true; // Return true if the merchant exists
+        return true; 
       },
     },
   },
@@ -72,7 +64,7 @@ export const TransactionSchema = new Schema<TransactionDocument>({
         validate: {
           validator: async (GoodId: Types.ObjectId) => {
             const good = await Good.findById(GoodId);
-            return !!good; // Return true if the good exists
+            return !!good; 
           },
         },
       },
@@ -83,12 +75,6 @@ export const TransactionSchema = new Schema<TransactionDocument>({
       },
     },
   ],
-  // validar que el array sea mayor a 0
-  // validate: {
-  //   validate: function (this: TransactionDocument) {
-  //     return this.goods.length > 0; // Ensure the goods array has at least one item
-  //   }
-  // },
 
   date: {
     type: Date,

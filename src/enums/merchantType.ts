@@ -1,3 +1,7 @@
+
+/**
+ * Enum of merchant types.
+ */
 export enum MerchantType {
   ALCHEMIST = "alchemist",
   BLACKSMIT = "blacksmit",

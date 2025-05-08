@@ -13,7 +13,6 @@ export const transactionRouter = express.Router();
  * Post a new transaction (sold) to the database
  */
 
-
 transactionRouter.post("/transactions/buy", async (req, res) => {
   try {
     const { id: transactionId, merchantName, items} = req.body;
@@ -24,7 +23,7 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
       return;
     }
     if (!items || items.length === 0) {
-      res.status(400).send({ error: "No items provided" });
+      res.status(404).send({ error: "No items provided" });
       return;
     }
     const goodsInTransaction = []; // Array to store the goods in the transaction
@@ -69,10 +68,6 @@ transactionRouter.post("/transactions/buy", async (req, res) => {
       date: new Date(),
       totalValue,
     });
-    // await transaction.save(); // Save the transaction to the database
-    // populate the goods and the merchan
-    // const populatedTransaction = await transaction.populate("goods.good")
-    // res.status(201).send(populatedTransaction); // Send the transaction as a response
     await transaction.save(); // Save the transaction to the database
     const populatedTransaction = await Transaction.findById(transaction._id)
       .populate("merchant", "id name") // Populate specific merchant fields
@@ -140,35 +135,6 @@ transactionRouter.post("/transactions/sell", async (req, res) => {
   }
 });
 
-/**
- * Get all transactions from the database
- */
-// transactionRouter.get("/transactions", async (req, res) => {
-//   try {
-//     // va a buscar todas las transacciones
-//     // const transactions = await Transaction.find()
-//     //   .populate("client", "id name") // Populate specific client fields
-//     //   .populate("merchant", "id name") // Populate specific merchant fields
-//     //   .populate("goods.good"); // Populate specific good fields
-//     const transactionsPopulated = await Transaction.find().populate({
-//       path: "goods.good",
-//       model: Good,
-//       select: "id name description material weight value stock",
-//     }).populate({
-//       path: "client",
-//       model: Client,
-//       select: "id name",
-//     }).populate({
-//       path: "merchant",
-//       model: Merchant,
-//       select: "id name",
-//     });
-//     res.status(200).send(transactionsPopulated); // Send the transactions as a response
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send({ error: "Error getting transactions" });
-//   }
-// });
 
 /**
  * Get transactions by merchant or client name
@@ -271,66 +237,6 @@ transactionRouter.get("/transactions/date/simple", async (req, res) => {
     res.status(500).send({ error: "Error getting transactions by date" });
   }
 });
-
-// /**
-//  * Update a transaction by id
-//  */
-
-// transactionRouter.patch("/transactions", async (req, res) => {
-//   try {
-//     const name = req.query.name; // Get the name from the request query
-//     const update = req.body; // Get the update from the request body
-//     if (!name) {
-//       res.status(400).send("Please provide a name");
-//       return;
-//     } else if (!req.body || Object.keys(req.body).length === 0) {
-//       res.status(400).send("Please provide an body to update");
-//       return;
-//     }
-//     console.log("Name: ", name);
-//     console.log("Update: ", update);
-//     const client = await Client.findOne({name: name}); // Find the client by name
-//     const merchant = await Merchant.findOne({name: name}); // Find the merchant by name
-//     const allowedUpdates = ["client", "merchant", "goods", "date", "totalValue"]; // Allowed updates
-//     const actualUpdates = Object.keys(req.body); // Get the actual updates from the request body
-//     const isValidUpdate = actualUpdates.every((update) =>
-//       allowedUpdates.includes(update),
-//     ); // Check if the updates are valid
-//     if (!isValidUpdate) {
-//       res.status(400).send("Invalid updates");
-//       return;
-//     }
-//     let result; // Variable to store the result of the update
-//     if (client) {
-//       result = await Transaction.findOneAndUpdate(
-//         { client: client._id }, // Find the transaction by client id
-//         update, // Update the transaction
-//         {
-//           new: true, // Return the updated transaction
-//           runValidators: true, // Run validators
-//         },
-//       );
-//     } else if (merchant) {
-//       result = await Transaction.findOneAndUpdate(
-//         { merchant: merchant._id }, // Find the transaction by merchant id
-//         update, // Update the transaction
-//         {
-//           new: true, // Return the updated transaction
-//           runValidators: true, // Run validators
-//         },
-//       );
-//     }
-//     if (!result) {
-//       res.status(404).send("No transaction found");
-//       return;
-//     }
-//     res.status(200).send(result); // Send the updated transaction as a response
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send({ error: "Error updating transaction" });
-//   }
-// })
 
 /**
  * Delete a transaction by id

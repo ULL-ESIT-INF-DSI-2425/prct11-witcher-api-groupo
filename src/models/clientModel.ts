@@ -3,7 +3,7 @@ import { ClientDocument } from "../interfaces/clientDocument.js";
 import { ClientSchema } from "../schemas/clientSchema.js";
 
 /**
- * Model representing a good in the database.
+ * Model representing a client in the database.
  * @constant
  * @type {model<GoodDocument>}
  */
