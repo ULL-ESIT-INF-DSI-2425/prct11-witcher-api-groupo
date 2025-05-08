@@ -1,4 +1,4 @@
-# Practica 07: Gestión del inventario de la Posada del Lobo Blanco
+# Práctica 11 - The Witcher: API REST con Node/Express
 
 **Nombres de los integrantes:**
 
