@@ -343,13 +343,19 @@ transactionRouter.delete("/transactions/:id", async (req, res) => {
       res.status(400).send("Please provide an id");
       return;
     }
-    const transaction = await Transaction.findByIdAndDelete(id)
-      .populate("client", "id name") // Populate specific client fields
-      .populate("merchant", "id name") // Populate specific merchant fields
-      .populate("goods.good"); // Populate specific good fields
+    // buscar la transaccion por id y aumentar el stock de los goods implicados y borrar la transaccion
+    const transaction = await Transaction.findByIdAndDelete(id); // Find and delete the transaction by id
     if (!transaction) {
       res.status(404).send("Transaction not found");
       return;
+    }
+    const goods = transaction.goods; // Get the goods from the transaction
+    for (const item of goods) { // Iterate over each item in the goods array
+      const good = await Good.findById(item.good); // Find the good by id
+      if (good) {
+        good.stock = good.stock + item.quantity; // Update the stock of the good
+        await good.save(); // Save the good to the database
+      }
     }
     res.status(200).send(transaction); // Send the deleted transaction as a response
   } catch (error) {
@@ -357,3 +363,46 @@ transactionRouter.delete("/transactions/:id", async (req, res) => {
     res.status(500).send({ error: "Error deleting transaction" });
   }
 });
+
+/**
+ * Patch a transaction by id
+ */
+
+transactionRouter.patch("/transactions/:id", async (req, res) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    // in case of no body provided
+    res.status(400).send("Please provide a body");
+    return;
+  } else {
+    const allowedUpdates = ["client", "merchant", "goods", "date", "totalValue"];
+    const actualUpdates = Object.keys(req.body);
+    const isValidUpdate = actualUpdates.every((update) =>
+      allowedUpdates.includes(update),
+    );
+    if (!isValidUpdate) {
+      res.status(400).send("Invalid updates");
+      return;
+    } else {
+      Transaction.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+          // Checks if the modified fields are valid
+        },
+      )
+        .then((transaction) => {
+          if (!transaction) {
+            // in case of no transaction to modify found
+            res.status(404).send("No transaction found");
+          } else {
+            res.send(transaction);
+          }
+        })
+        .catch(() => {
+          res.status(500).send();
+        });
+    }
+  }
+})
